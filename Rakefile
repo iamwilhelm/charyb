@@ -1,12 +1,12 @@
 
-desc "runs the status crawler"
+desc "runs Charyb to suck down data"
 task :run do
-  puts "Running Status Crawler"
+  puts "Running Charyb..."
   load 'script/run.rb'
 end
 
 namespace :view do
-  desc "updates the views"  
+  desc "Updating view documents"  
   task :update do
     load 'script/view_update.rb'
   end
