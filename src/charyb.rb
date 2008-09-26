@@ -15,6 +15,8 @@ def facebook_friends(session)
     next if friend.status.message.nil? || friend.status.message.empty?
     yield Friend::Facebook.new(friend)
   end
+rescue Exception => e
+  puts e.inspect
 end
 
 def all_friends
