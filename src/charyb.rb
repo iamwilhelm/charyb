@@ -7,6 +7,8 @@ def twitter_friends(session)
     next if friend.status.nil? || friend.status.text.empty?
     yield Friend::Twitter.new(friend)
   end
+rescue Exception => e
+  puts e.inspect
 end
 
 def facebook_friends(session)
