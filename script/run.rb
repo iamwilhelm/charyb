@@ -3,8 +3,9 @@
 require 'config/initialize'
 require 'charyb'
 
-Store.open(Thoughtless::DATABASE_NAME) do |db|
-  puts "Opened document store"
-  Store.save_friends(db) 
+begin
+  Charyb.start
+rescue Exception => e
+  puts e.backtrace
+  exit 1
 end
-

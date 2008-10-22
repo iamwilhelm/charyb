@@ -20,26 +20,7 @@ module Store
       puts "Setted up the views"
     end
 
-    def save_friends(db)
-      all_friends do |friend|
-        if friend_updated?(friend, db)
-          puts friend.to_s
-          db.save(friend.to_doc)
-        end
-      end
-    end
 
-    def unique_status(friend, db)
-      # must be an easier way to query friends through couchrest
-      url = %Q{users/status?key=[#{friend.user_id},"#{friend.service}","#{friend.timestamp}"]}
-      db.view(URI::escape(url))
-    end
-
-    def friend_updated?(friend, db)
-      # if no unique statuses, friend has new status update, 
-      # which means he/she updated
-      unique_status(friend, db)["rows"].empty?
-    end
   end
 
   module View
