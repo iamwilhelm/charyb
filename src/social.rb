@@ -21,21 +21,22 @@ module Social
           end
           @session.user.name
         rescue 
-          puts "Failed."
+          puts "Facebook session loading failed."
           puts "Creating new session"
           @session = Facebooker::Session::Desktop.create(API_KEY, SECRET_KEY)
           puts "Paste the URL into your web browser and login:"
           puts @session.login_url
           puts "Hit return to continue..."
           gets
+
+          # save the session
+          puts "Saving session file at #{SESSION_PATH}"
+          File.open(File.join(SESSION_PATH, 'session.fb'), 'w') do |file|
+            Marshal.dump(@session, file)
+          end
         end
 
         yield @session
-
-        # save the session
-        File.open(File.join(SESSION_PATH, 'session.fb'), 'w') do |file|
-          Marshal.dump(@session, file)
-        end
       end
     end
   end
