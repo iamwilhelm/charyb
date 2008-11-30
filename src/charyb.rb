@@ -55,7 +55,6 @@ module Charyb
     end
 
     def facebook_friends(session)
-      debugger
       friends = session.user.friends!(:name, :status) << session.user
       friends.each do |friend|
         next if friend.status.message.nil? || friend.status.message.empty?

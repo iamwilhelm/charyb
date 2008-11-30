@@ -3,9 +3,9 @@
 require 'config/initialize'
 require 'charyb'
 
-begin
+#begin
   Charyb.start
-rescue Exception => e
-  puts e.backtrace
-  exit 1
-end
+#rescue Exception => e
+#  puts e.backtrace
+#  exit 1
+#end
