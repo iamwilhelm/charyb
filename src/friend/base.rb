@@ -11,7 +11,7 @@ module Friend
     def initialize(friend)
       @service = :generic
       @friend = friend
-      open_connection(Thoughtless::DATABASE_NAME)
+      open_connection(Charyb::DEFAULT_DATABASE_NAME)
     end
 
     def to_s

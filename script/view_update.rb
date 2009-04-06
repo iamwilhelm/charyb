@@ -3,10 +3,10 @@
 require "config/initialize"
 require "charyb"
 
-Store.open(Thoughtless::DATABASE_NAME) do |db|
+Store.open(Charyb::DEFAULT_DATABASE_NAME) do |db|
   puts "Opened document store"
   Store.setup(db)
-  puts "Updated view documents
+  puts "Updated view documents"
 end
 
   

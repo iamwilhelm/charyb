@@ -6,8 +6,10 @@ $: <<
   File.join(CURRENT_PATH, "../lib") <<
   File.join(CURRENT_PATH, "../src")
 
-module Thoughtless
+module Charyb
   SESSION_PATH = File.join(CURRENT_PATH, "../tmp")
 
-  DATABASE_NAME = "thoughtless"
+  DEFAULT_DATABASE_NAME = "thoughtless"
+  
+  
 end

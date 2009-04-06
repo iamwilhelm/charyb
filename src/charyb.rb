@@ -13,7 +13,8 @@ module Charyb
 
   class Base
     def initialize(db_name = nil)
-      @db_name = db_name || Thoughtless::DATABASE_NAME
+      @db_name = db_name || Charyb::DEFAULT_DATABASE_NAME
+      @datasrcs = DataSource::SOURCES
     end
 
     def crawl
