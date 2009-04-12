@@ -9,7 +9,5 @@ $: <<
 module Charyb
   SESSION_PATH = File.join(CURRENT_PATH, "../tmp")
 
-  DEFAULT_DATABASE_NAME = "thoughtless"
-  
-  
+  DEFAULT_DATABASE_NAME = "sivv"
 end
