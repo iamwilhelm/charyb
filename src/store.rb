@@ -8,6 +8,7 @@ module Store
     def open(db_name)
       db = CouchRest.database!("http://localhost:5984/#{db_name}")
       yield db
+      return db
     rescue Errno::ECONNREFUSED => e
       $stderr.puts "Error: CouchDB is not running"
       exit
@@ -19,8 +20,6 @@ module Store
       db.save(View::users)
       puts "Setted up the views"
     end
-
-
   end
 
   module View
