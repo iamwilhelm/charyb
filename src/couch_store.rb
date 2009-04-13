@@ -3,7 +3,8 @@ require 'cgi'
 require 'rubygems'
 require 'couchrest'
 
-module Store
+module CouchStore
+  
   class << self
     def open(db_name)
       db = CouchRest.database!("http://localhost:5984/#{db_name}")
@@ -15,10 +16,10 @@ module Store
     end
     
     def setup(db)
-      #user_view = db.get("_design/users")
-      #puts user_view.inspect
-      db.save(View::users)
-      puts "Setted up the views"
+      # user_view = db.get("_design/users")
+      # puts user_view.inspect
+      # db.save(View::users)
+      # puts "Setted up the views"
     end
   end
 

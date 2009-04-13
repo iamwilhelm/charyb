@@ -1,8 +1,8 @@
 #require 'social'
 #require 'friend'
-#require 'store'
 
 require 'sources'
+require 'couch_store'
 
 module Charyb
 
@@ -13,18 +13,20 @@ module Charyb
   end
   
   class Base
-
     def initialize(db_name = nil)
       @db_name = db_name || Charyb::DEFAULT_DATABASE_NAME
       @datasources = Charyb::Sources::datasources
     end
 
     def crawl
-      @datasources.each do |ds|
-        next if !ds.stale?
-        puts "Crawling #{ds.uri}"
-        ds.crawl do |record|
-          puts "=> #{record.inspect}"
+      CouchStore.open(@db_name) do |@db|
+        @datasources.each do |ds|
+          next if !ds.stale?
+          puts "Crawling #{ds.uri}"
+          ds.crawl do |columns, record|
+            document = Hash[columns.zip(record)]
+            @db.save_doc(document)
+          end
         end
       end
     end

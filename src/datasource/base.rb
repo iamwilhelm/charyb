@@ -31,11 +31,13 @@ module Datasource
           map_slice(@dataset[:columns].size)
       end
 
-      @dataset[:records].map!(&@processors[:clean])
+      @dataset[:columns] = @processors[:clean_column].call(@dataset[:columns]) if @processors[:clean_column]
+                              
+      @dataset[:records].map!(&@processors[:clean_record])
       @dataset[:records].sort!(&@processors[:collation])
       @dataset[:records].each do |r| 
         @processors[:print].call(r) if @processors[:print]
-        yield r if block_given? 
+        yield(@dataset[:columns], r) if block_given? 
       end
     end
 

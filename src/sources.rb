@@ -4,19 +4,26 @@ module Charyb
   class Sources
     include Datasource
     
-    # debt vs year  
-    # source((1..5).map { |i| "http://www.treasurydirect.gov/govt/reports/pd/histdebt/histdebt_histo#{i}.htm" },
-    source((1..5).map { |i| "test/datasources/treasury.gov/histdebt_histo#{i}.htm" },
-           { :column => proc { |doc| (doc/"table.data1 th") },
-             :record => proc { |doc| (doc/"table.data1 td") }, 
-           },
-           { :clean => proc { |record|
-               date, amount = record
-               [date.match(/\/(\d+)\s*$/)[1].to_i, 
-                amount.gsub(/&\w+;/, "").gsub(/\*/, "").gsub(/,/, "").to_f]
-             },
-             :collation => proc { |a, b| a.first <=> b.first }, 
-           })
+    class << self
+      def clean_cia_column
+        proc { |columns|
+          rank, country, attribute, updated_at = columns
+          [country, 
+           attribute.gsub(/<.*>/, "").gsub(/\s+/, " ").gsub(/^\s/, "").gsub(/\s$/, ""), 
+           updated_at]
+        }
+      end
+      
+      def clean_cia_record
+        proc { |record|
+          rank, country, attribute, updated_at = record.map { |r|
+            md = r.match(/<.*>(.*)<\/.*>/) 
+            md.nil? ? r : md[1]
+          }.map { |r| r.gsub(/^\s+/, "").gsub(/\s+$/, "") }
+          a = [country, attribute.gsub(/,/, "").to_f, updated_at]
+        }
+      end
+    end
     
     # country vs population
     # source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2119rank.html",
@@ -24,13 +31,8 @@ module Charyb
            { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
              :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
            },
-           { :clean => proc { |record|
-               rank, country, population, updated_at = record.map { |r|
-                 md = r.match(/<.*>(.*)<\/.*>/) 
-                 md.nil? ? r : md[1]
-               }.map { |r| r.gsub(/^\s+/, "").gsub(/\s+$/, "") }
-               a = [country, population.gsub(/,/, "").to_i, updated_at]
-             },
+           { :clean_column => clean_cia_column,
+             :clean_record => clean_cia_record,
              :collation => proc { |a, b| a.first <=> b.first },
            })
 
@@ -40,13 +42,8 @@ module Charyb
            { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
              :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
            },
-           { :clean => proc { |record|
-               rank, country, birth_rate, updated_at = record.map { |r|
-                 md = r.match(/<.*>(.*)<\/.*>/) 
-                 md.nil? ? r : md[1]
-               }.map { |r| r.gsub(/^\s+/, "").gsub(/\s+$/, "") }
-               a = [country, birth_rate.gsub(/,/, "").to_f, updated_at]
-             },
+           { :clean_column => clean_cia_column,
+             :clean_record => clean_cia_record,
              :collation => proc { |a, b| a.first <=> b.first },
            })
 
@@ -56,13 +53,8 @@ module Charyb
            { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
              :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
            },
-           { :clean => proc { |record|
-               rank, country, death_rate, updated_at = record.map { |r|
-                 md = r.match(/<.*>(.*)<\/.*>/) 
-                 md.nil? ? r : md[1]
-               }.map { |r| r.gsub(/^\s+/, "").gsub(/\s+$/, "") }
-               a = [country, death_rate.gsub(/,/, "").to_f, updated_at]
-             },
+           { :clean_column => clean_cia_column,
+             :clean_record => clean_cia_record,
              :collation => proc { |a, b| a.first <=> b.first },
            })
 
@@ -72,14 +64,24 @@ module Charyb
            { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
              :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
            },
-           { :clean => proc { |record|
-               rank, country, pop_rate, updated_at = record.map { |r|
-                 md = r.match(/<.*>(.*)<\/.*>/) 
-                 md.nil? ? r : md[1]
-               }.map { |r| r.gsub(/^\s+/, "").gsub(/\s+$/, "") }
-               a = [country, pop_rate.gsub(/,/, "").to_f, updated_at]
-             },
+           { :clean_column => clean_cia_column,
+             :clean_record => clean_cia_record,
              :collation => proc { |a, b| a.first <=> b.first },
+           })
+
+    # debt vs year  
+    # source((1..5).map { |i| "http://www.treasurydirect.gov/govt/reports/pd/histdebt/histdebt_histo#{i}.htm" },
+    source((1..5).map { |i| "test/datasources/treasury.gov/histdebt_histo#{i}.htm" },
+           { :column => proc { |doc| (doc/"table.data1 th") },
+             :record => proc { |doc| (doc/"table.data1 td") }, 
+           },
+           { :clean_record => proc { |record|
+               date, amount = record
+               [date.match(/\/(\d+)\s*$/)[1].to_i, 
+                amount.gsub(/&\w+;/, "").gsub(/\*/, "").gsub(/,/, "").to_f]
+             },
+
+             :collation => proc { |a, b| a.first <=> b.first }, 
            })
 
   end
