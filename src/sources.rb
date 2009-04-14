@@ -8,9 +8,9 @@ module Charyb
       def clean_cia_column
         proc { |columns|
           rank, country, attribute, updated_at = columns
-          [country, 
-           attribute.gsub(/<.*>/, "").gsub(/\s+/, " ").gsub(/^\s/, "").gsub(/\s$/, ""), 
-           updated_at]
+          attribute = attribute.gsub(/\s+/, " ").gsub(/^\s/, "").gsub(/\s$/, "")
+          attribute, units = attribute.split(/<.*>/)
+          [country, attribute, updated_at]
         }
       end
       
@@ -75,7 +75,11 @@ module Charyb
            { :column => proc { |doc| (doc/"table.data1 th") },
              :record => proc { |doc| (doc/"table.data1 td") }, 
            },
-           { :clean_record => proc { |record|
+           { :clean_column => proc { |column|
+               date, debt = column
+               [date.chop, debt]
+             },
+             :clean_record => proc { |record|
                date, amount = record
                [date.match(/\/(\d+)\s*$/)[1].to_i, 
                 amount.gsub(/&\w+;/, "").gsub(/\*/, "").gsub(/,/, "").to_f]
