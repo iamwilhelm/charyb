@@ -1,6 +1,8 @@
 #require 'social'
 #require 'friend'
 
+require 'core_ext/string'
+
 require 'sources'
 require 'couch_store'
 
@@ -24,7 +26,9 @@ module Charyb
           next if !ds.stale?
           puts "Crawling #{ds.uri}"
           ds.crawl do |columns, record|
+            columns = columns.map(&:downcase).map(&:underscorize)
             document = Hash[columns.zip(record)]
+            pp document
             @db.save_doc(document)
           end
         end
