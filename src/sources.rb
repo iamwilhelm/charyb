@@ -26,8 +26,8 @@ module Charyb
     end
     
     # country vs population
-    # source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2119rank.html",
-    source("test/datasources/cia.gov/2119rank.html",
+    source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2119rank.html",
+    # source("test/datasources/cia.gov/2119rank.html",
            { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
              :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
            },
@@ -37,8 +37,8 @@ module Charyb
            })
 
     # country vs birth rate
-    # source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2054rank.html",
-    source("test/datasources/cia.gov/2054rank.html",
+    source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2054rank.html",
+    # source("test/datasources/cia.gov/2054rank.html",
            { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
              :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
            },
@@ -48,8 +48,8 @@ module Charyb
            })
 
     # country vs death rate
-    # source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2066rank.html",
-    source("test/datasources/cia.gov/2066rank.html",
+    source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2066rank.html",
+    # source("test/datasources/cia.gov/2066rank.html",
            { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
              :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
            },
@@ -59,8 +59,8 @@ module Charyb
            })
 
     # country vs population growth
-    # source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2002rank.html",
-    source("test/datasources/cia.gov/2002rank.html",
+    source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2002rank.html",
+    # source("test/datasources/cia.gov/2002rank.html",
            { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
              :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
            },
@@ -70,8 +70,8 @@ module Charyb
            })
 
     # debt vs year  
-    # source((1..5).map { |i| "http://www.treasurydirect.gov/govt/reports/pd/histdebt/histdebt_histo#{i}.htm" },
-    source((1..5).map { |i| "test/datasources/treasury.gov/histdebt_histo#{i}.htm" },
+    source((1..5).map { |i| "http://www.treasurydirect.gov/govt/reports/pd/histdebt/histdebt_histo#{i}.htm" },
+    # source((1..5).map { |i| "test/datasources/treasury.gov/histdebt_histo#{i}.htm" },
            { :column => proc { |doc| (doc/"table.data1 th") },
              :record => proc { |doc| (doc/"table.data1 td") }, 
            },

@@ -1,8 +1,11 @@
 require 'rubygems'
 require 'hpricot'
 require 'open-uri'
+require 'openssl'
 
 require 'core_ext/enumerable'
+
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 module Datasource
   class Base
