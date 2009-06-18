@@ -29,9 +29,15 @@ module Datasource
     def crawl
       @uris.each do |uri|
         doc = Hpricot(open(uri))
+        beginning_index = 0 + (@selectors[:skip] || 0)
+
+        # clean columns and records
         @dataset[:columns] = @selectors[:column].call(doc).map(&:inner_html)
-        @dataset[:records] += @selectors[:record].call(doc).map(&:inner_html).
-          map_slice(@dataset[:columns].size)
+        dataset_records = @selectors[:record].call(doc).map(&:inner_html)
+
+        # skip records
+        dataset_records = dataset_records[beginning_index..-1]
+        @dataset[:records] += dataset_records.map_slice(@dataset[:columns].size)
       end
 
       @dataset[:columns] = @processors[:clean_column].call(@dataset[:columns]) if @processors[:clean_column]

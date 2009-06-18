@@ -1,88 +1,76 @@
 require 'datasource'
+require 'sources/cia_gov'
 
 module Charyb
   class Sources
     include Datasource
-    
+    include CiaGov
+
     class << self
-      def clean_cia_column
-        proc { |columns|
-          rank, country, attribute, updated_at = columns
-          attribute = attribute.gsub(/\s+/, " ").gsub(/^\s/, "").gsub(/\s$/, "")
-          attribute, units = attribute.split(/<.*>/)
-          [country, attribute, updated_at]
-        }
+      def rm_tags(str)
+        str.gsub(/<.*\/>/, "").gsub(/<.*>.*<\/.*>/, "")
       end
       
-      def clean_cia_record
-        proc { |record|
-          rank, country, attribute, updated_at = record.map { |r|
-            md = r.match(/<.*>(.*)<\/.*>/) 
-            md.nil? ? r : md[1]
-          }.map { |r| r.gsub(/^\s+/, "").gsub(/\s+$/, "") }
-          a = [country, attribute.gsub(/,/, "").to_f, updated_at]
-        }
+      def rm_html_entities(str)
+        str.gsub(/&\w+;/, "")
+      end
+
+      def rm_commas(str)
+        str.gsub(/,\s*/, "")
+      end
+
+      def rm_dots(str)
+        str.gsub(/\./, "")
+      end
+
+      def rm_spaces(str)
+        str.gsub(/\s+/, "")
+      end
+
+      def grep_spaces(str)
+        str.gsub(/\s+/, "_")
       end
     end
+
+    # national census
+    source("http://www.infoplease.com/ipa/A0110380.html",
+           { :column => proc { |doc| (doc/"table#A0110381 tr th") },
+             :record => proc { |doc| (doc/"table#A0110381 tr td") },
+           }, { 
+             :clean_column => proc { |column|
+               year, population, land_area, population_per_land_area = column
+               [rm_spaces(year),
+                rm_tags(population).chop.gsub(/\n+/, "_"),
+                rm_tags(land_area.gsub(/,\s*/, "_")),
+                rm_tags(rm_dots(population_per_land_area)),]
+             },
+             :clean_record => proc { |record|
+               year, population, land_area, population_per_land_area = record
+               [year.to_i, 
+                rm_commas(population.chop).to_i,
+                rm_commas(land_area).to_i,
+                population_per_land_area.to_f,]
+             },
+             :collation => proc { |a, b| a.first <=> b.first }
+           })
     
-    # country vs population
-    source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2119rank.html",
-    # source("test/datasources/cia.gov/2119rank.html",
-           { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
-             :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
-           },
-           { :clean_column => clean_cia_column,
-             :clean_record => clean_cia_record,
-             :collation => proc { |a, b| a.first <=> b.first },
-           })
-
-    # country vs birth rate
-    source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2054rank.html",
-    # source("test/datasources/cia.gov/2054rank.html",
-           { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
-             :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
-           },
-           { :clean_column => clean_cia_column,
-             :clean_record => clean_cia_record,
-             :collation => proc { |a, b| a.first <=> b.first },
-           })
-
-    # country vs death rate
-    source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2066rank.html",
-    # source("test/datasources/cia.gov/2066rank.html",
-           { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
-             :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
-           },
-           { :clean_column => clean_cia_column,
-             :clean_record => clean_cia_record,
-             :collation => proc { |a, b| a.first <=> b.first },
-           })
-
-    # country vs population growth
-    source("https://www.cia.gov/library/publications/the-world-factbook/rankorder/2002rank.html",
-    # source("test/datasources/cia.gov/2002rank.html",
-           { :column => proc { |doc| (doc/"table td div.FieldLabel") }, 
-             :record => proc { |doc| (doc/"table td > table tr:gt(1) td") },
-           },
-           { :clean_column => clean_cia_column,
-             :clean_record => clean_cia_record,
-             :collation => proc { |a, b| a.first <=> b.first },
-           })
+    # US household by size
+    # http://www.infoplease.com/ipa/A0884238.html
 
     # debt vs year  
     source((1..5).map { |i| "http://www.treasurydirect.gov/govt/reports/pd/histdebt/histdebt_histo#{i}.htm" },
     # source((1..5).map { |i| "test/datasources/treasury.gov/histdebt_histo#{i}.htm" },
            { :column => proc { |doc| (doc/"table.data1 th") },
              :record => proc { |doc| (doc/"table.data1 td") }, 
-           },
-           { :clean_column => proc { |column|
+           }, { 
+             :clean_column => proc { |column|
                date, debt = column
-               [date.chop, debt]
+               ["year", debt]
              },
              :clean_record => proc { |record|
                date, amount = record
                [date.match(/\/(\d+)\s*$/)[1].to_i, 
-                amount.gsub(/&\w+;/, "").gsub(/\*/, "").gsub(/,/, "").to_f]
+                rm_commas(rm_html_entities(amount).gsub(/\*/, "")).to_f]
              },
 
              :collation => proc { |a, b| a.first <=> b.first }, 
