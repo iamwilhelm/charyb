@@ -28,7 +28,7 @@ module Charyb
              :clean_record => proc { |record|
                year, population, land_area, population_per_land_area = record
                [year.to_i, 
-                rm_commas(population.chop).to_i,
+                rm_commas(rm_spaces(population)).to_i,
                 rm_commas(land_area).to_i,
                 population_per_land_area.to_f,]
              },
