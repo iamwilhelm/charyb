@@ -1,4 +1,6 @@
 require 'datasource'
+require 'datasource/string_filters'
+
 require 'sources/cia_gov'
 
 module Charyb
@@ -7,34 +9,13 @@ module Charyb
     include CiaGov
 
     class << self
-      def rm_tags(str)
-        str.gsub(/<.*\/>/, "").gsub(/<.*>.*<\/.*>/, "")
-      end
-      
-      def rm_html_entities(str)
-        str.gsub(/&\w+;/, "")
-      end
-
-      def rm_commas(str)
-        str.gsub(/,\s*/, "")
-      end
-
-      def rm_dots(str)
-        str.gsub(/\./, "")
-      end
-
-      def rm_spaces(str)
-        str.gsub(/\s+/, "")
-      end
-
-      def grep_spaces(str)
-        str.gsub(/\s+/, "_")
-      end
+      include Datasource::StringFilters
     end
-
+    
     # national census
     source("http://www.infoplease.com/ipa/A0110380.html",
-           { :column => proc { |doc| (doc/"table#A0110381 tr th") },
+           { 
+             :column => proc { |doc| (doc/"table#A0110381 tr th") },
              :record => proc { |doc| (doc/"table#A0110381 tr td") },
            }, { 
              :clean_column => proc { |column|
