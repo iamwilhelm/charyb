@@ -15,8 +15,8 @@ module Charyb
     # national census
     source("http://www.infoplease.com/ipa/A0110380.html",
            { 
-             :column => proc { |doc| (doc/"table#A0110381 tr th") },
-             :record => proc { |doc| (doc/"table#A0110381 tr td") },
+             :column => proc { |doc| (doc/"table.sgmltable tr th") },
+             :record => proc { |doc| (doc/"table.sgmltable tr td") },
            }, { 
              :clean_column => proc { |column|
                year, population, land_area, population_per_land_area = column
@@ -35,12 +35,8 @@ module Charyb
              :collation => proc { |a, b| a.first <=> b.first }
            })
     
-    # US household by size
-    # http://www.infoplease.com/ipa/A0884238.html
-
-    # debt vs year  
+    # Debt vs year  
     source((1..5).map { |i| "http://www.treasurydirect.gov/govt/reports/pd/histdebt/histdebt_histo#{i}.htm" },
-    # source((1..5).map { |i| "test/datasources/treasury.gov/histdebt_histo#{i}.htm" },
            { :column => proc { |doc| (doc/"table.data1 th") },
              :record => proc { |doc| (doc/"table.data1 td") }, 
            }, { 
@@ -53,10 +49,9 @@ module Charyb
                [date.match(/\/(\d+)\s*$/)[1].to_i, 
                 rm_commas(rm_html_entities(amount).gsub(/\*/, "")).to_f]
              },
-
              :collation => proc { |a, b| a.first <=> b.first }, 
            })
-
+    
   end
   
 end
