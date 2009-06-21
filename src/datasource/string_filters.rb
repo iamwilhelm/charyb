@@ -13,6 +13,10 @@ module Datasource
       str.gsub(/&\w+;/, "")
     end
 
+    def rm_parens(str)
+      str.gsub(/(.*)/, "")
+    end
+
     def rm_commas(str)
       str.gsub(/,\s*/, "")
     end
@@ -27,6 +31,10 @@ module Datasource
 
     def grep_spaces(str)
       str.gsub(/\s+/, "_")
+    end
+
+    def perc_to_f(str)
+      str.gsub(/%/, "").to_f * 100.0
     end
 
   end
