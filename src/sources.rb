@@ -12,6 +12,43 @@ module Charyb
       include Datasource::StringFilters
     end
     
+    # US household by size
+    source("http://www.infoplease.com/ipa/A0884238.html",
+           { 
+             :column => proc { |doc| (doc/"table.sgmltable tr th") },
+             :record => proc { |doc| (doc/"table.sgmltable tr td") },
+           }, {
+             :clean_column => proc { |column|
+               year, households, _, avg_pop_per_household = column
+               n_person_households = column[4..-1]
+
+               # note that the columns are reordered here due to the 3rd th 
+               # being a spanning column header
+               a = [ year.downcase, grep_spaces(condense_spaces(rm_tags(rm_parens(households)))).downcase] + 
+                 n_person_households.map { |pph| grep_spaces(condense_spaces(rm_single_tags(pph.gsub(/-/, "")))) + "_household" } + 
+                 [ "ave_pop_per_household" ]
+               puts a.inspect
+               a
+             },
+             :clean_record => proc { |record|
+               year, households = record
+               n_person_households = record[2..-2]
+               avg_pop_per_household = record[-1]
+
+               # we convert percentages to actual number by remultiplying the 
+               # percentage to the number of households
+               num_of_households = rm_commas(households).to_i
+               n_person_households.map! { |pph| (perc_to_f(pph) * num_of_households).round }
+
+               a = [ rm_spaces(rm_parens(year)).to_i, num_of_households ] + 
+                 n_person_households + 
+                 [ avg_pop_per_household.to_f ]
+               puts a.inspect
+               a
+             },
+             :collation => proc { |a, b| a.first <=> b.first }
+           })
+
     # national census
     source("http://www.infoplease.com/ipa/A0110380.html",
            { 

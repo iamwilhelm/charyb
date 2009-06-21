@@ -6,15 +6,19 @@ module Datasource
     # module_functions
 
     def rm_tags(str)
-      str.gsub(/<.*\/>/, "").gsub(/<.*>.*<\/.*>/, "")
+      rm_single_tags(str).gsub(/<.*>[^<>].*<\/.*>/, "")
     end
-    
+
+    def rm_single_tags(str)
+      str.gsub(/<[^<>]*\/>/, "")
+    end
+
     def rm_html_entities(str)
       str.gsub(/&\w+;/, "")
     end
 
     def rm_parens(str)
-      str.gsub(/(.*)/, "")
+      str.gsub(/\(.*\)/, "")
     end
 
     def rm_commas(str)
@@ -29,12 +33,16 @@ module Datasource
       str.gsub(/\s+/, "")
     end
 
+    def condense_spaces(str)
+      str.gsub(/\s+/, " ")
+    end
+
     def grep_spaces(str)
       str.gsub(/\s+/, "_")
     end
 
     def perc_to_f(str)
-      str.gsub(/%/, "").to_f * 100.0
+      str.gsub(/%/, "").to_f / 100.0
     end
 
   end

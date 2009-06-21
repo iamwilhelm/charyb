@@ -33,14 +33,12 @@ module Datasource
 
         # clean columns and records
         @dataset[:columns] = @selectors[:column].call(doc).map(&:inner_html)
-        dataset_records = @selectors[:record].call(doc).map(&:inner_html)
+        if @processors[:clean_column]
+          @dataset[:columns] = @processors[:clean_column].call(@dataset[:columns])
+        end
 
-        # skip records
-        dataset_records = dataset_records[beginning_index..-1]
-        @dataset[:records] += dataset_records.map_slice(@dataset[:columns].size)
+        @dataset[:records] += @selectors[:record].call(doc).map(&:inner_html).map_slice(@dataset[:columns].size)
       end
-
-      @dataset[:columns] = @processors[:clean_column].call(@dataset[:columns]) if @processors[:clean_column]
                               
       @dataset[:records].map!(&@processors[:clean_record])
       @dataset[:records].sort!(&@processors[:collation])
