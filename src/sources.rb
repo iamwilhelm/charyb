@@ -11,6 +11,72 @@ module Charyb
     class << self
       include Datasource::StringFilters
     end
+
+    # live birth and birth rates
+    source("http://www.infoplease.com/ipa/A0005067.html",
+           {
+             :column => proc { |doc| (doc/"table.sgmltable tr th") },
+             :record => proc { |doc| (doc/"table.sgmltable tr td") },
+           }, {
+             :clean_column => proc { |record| 
+               [ "year", "live_births", "birth_rates"]
+             },
+             :clean_record => proc { |record| 
+               year, live_births, birth_rates = record 
+               [ year.to_i, 
+                 rm_commas(live_births).to_i, 
+                 rm_commas(birth_rates).to_f, ]
+             },
+           })             
+           
+
+    # live births by delivery method
+    source("http://www.infoplease.com/ipa/A0922187.html",
+           {
+             :column => proc { |doc| (doc/"table.sgmltable tr th") },
+             :record => proc { |doc| (doc/"table.sgmltable tr td") },
+           }, {
+             :clean_column => proc { |record| 
+               [ "year", "num_of_births", "vaginal_births", "cesarean_births", "cesarean_rate" ]
+             },
+             :clean_record => proc { |record| 
+               year, num_of_births, vaginal, cesarean, cesarean_rate = record 
+               [ year.to_i, 
+                 rm_commas(num_of_births).to_i, 
+                 rm_commas(vaginal).to_i,
+                 rm_commas(cesarean).to_i, 
+                 cesarean_rate.to_f, ]
+             },
+           })             
+
+    # median marriage age
+    source("http://www.infoplease.com/ipa/A0005061.html",
+           {
+             :column => proc { |doc| (doc/"table.sgmltable tr th") },
+             :record => proc { |doc| (doc/"table.sgmltable tr td") },
+           }, {
+             :clean_column => proc { |record| 
+               year, male_age, female_age = record
+               ["year", "male_median_marriage_age", "female_median_marriage_age"] 
+             },
+             :clean_record => proc { |record| 
+               year, male_age, female_age = record 
+               [year.to_i, rm_tags(male_age).to_f, rm_tags(female_age).to_f]
+             },
+           })
+
+    # Colonial population size
+    source("http://www.infoplease.com/ipa/A0004979.html",
+           {
+             :column => proc { |doc| (doc/"table.sgmltable tr th") },
+             :record => proc { |doc| (doc/"table.sgmltable tr td") },
+           }, {
+             :clean_column => proc { |record| ["year", "colonial_population"] },
+             :clean_record => proc { |record| 
+               year, pop = record 
+               [year.to_i, rm_commas(pop).to_i]
+             },
+           })
     
     # US household by size
     source("http://www.infoplease.com/ipa/A0884238.html",
@@ -20,15 +86,19 @@ module Charyb
            }, {
              :clean_column => proc { |column|
                year, households, _, avg_pop_per_household = column
-               n_person_households = column[4..-1]
 
                # note that the columns are reordered here due to the 3rd th 
                # being a spanning column header
-               a = [ year.downcase, grep_spaces(condense_spaces(rm_tags(rm_parens(households)))).downcase] + 
-                 n_person_households.map { |pph| grep_spaces(condense_spaces(rm_single_tags(pph.gsub(/-/, "")))) + "_household" } + 
+               numbers = { 1 => "one", 2 => "two", 3 => "three", 4 => "four", 5 => "five", 6 => "six", 7 => "seven" }
+               [ year.downcase, grep_spaces(condense_spaces(rm_tags(rm_parens(households)))).downcase] + 
+                 (1..7).map { |number| 
+                   if number == 7
+                     numbers[number] + "_or_more_person_households"
+                   else
+                     numbers[number] + "_person_households"
+                   end
+                 } + 
                  [ "ave_pop_per_household" ]
-               puts a.inspect
-               a
              },
              :clean_record => proc { |record|
                year, households = record
@@ -79,7 +149,7 @@ module Charyb
            }, { 
              :clean_column => proc { |column|
                date, debt = column
-               ["year", debt]
+               ["year", "debt"]
              },
              :clean_record => proc { |record|
                date, amount = record
