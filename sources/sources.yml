@@ -1,0 +1,27 @@
+sources:
+  url: "http://www.infoplease.com/ipa/A0005061.html"
+  description: "Median Marriage Age"
+  "text/html": 
+    column: 
+      dom: "table.sgmltable tr th"
+      clean: "%w(year male_median_marriage_age female_median_marriage_age)"
+    record: 
+      dom: "table.sgmltable tr td"
+      clean: "[record[0].to_i, rm_tags(record[1]).to_f, rm_tags(record[2]).to_f]"
+  last_crawled_on: <%= Time.now %>
+  last_updated_on: <%= 3.days ago %>
+  created_on:
+  updated_on:
+
+  url: "http://davelyon.net/data.csv"
+  description: "Hacker News Survey 2009"
+  "text/csv":
+    column:
+      clean: ""
+    record:
+      clean: ""
+  last_crawled_on: <%= Time.now %>
+  last_updated_on: <%= 3.days ago %>
+  created_on:
+  updated_on:
+    
