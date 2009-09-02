@@ -24,4 +24,15 @@ module Charyb
 
 end
 
+# initialize connection to source tracking database
+require 'rubygems'
+require 'active_record'
 
+module Charyb
+  # set the datasource logger
+  ActiveRecord::Base.logger = Logger.new(DATASOURCES_LOG_PATH)
+
+  # establish the active record connection to datasource db
+  @connection = ActiveRecord::Base.establish_connection(:adapter => "sqlite3",
+                                                        :dbfile => DATASOURCES_PATH)
+end
