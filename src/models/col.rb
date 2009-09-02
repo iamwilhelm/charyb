@@ -1,4 +1,4 @@
-require 'active_record'
+puts "required col!"
 
 module Charyb
   class Col < ActiveRecord::Base

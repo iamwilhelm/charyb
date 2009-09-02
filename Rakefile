@@ -8,7 +8,7 @@ namespace :run do
 
   task :web do
     puts "Running Charyb interface..."
-    load 'script/run_web.rb'
+    `ruby src/application.rb`
   end
 end
 

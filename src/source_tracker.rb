@@ -1,22 +1,10 @@
-require 'rubygems'
-require 'active_record'
-
 require 'source'
 require 'col'
 
 module Charyb
   class SourceTracker
-    DB_PATH = File.join(Charyb::SOURCES_PATH, "sources.db")
-    LOG_PATH = File.join(Charyb::LOG_PATH, "sources.log")
 
     def initialize
-      puts "activating active_record logger"
-      ActiveRecord::Base.logger = Logger.new(LOG_PATH)
-      
-      puts "connecting to db at #{DB_PATH}"
-      @connection = ActiveRecord::Base.establish_connection(:adapter => "sqlite3",
-                                                            :dbfile => DB_PATH)
-
       setup
     end
 

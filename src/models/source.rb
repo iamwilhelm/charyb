@@ -1,4 +1,4 @@
-require 'active_record'
+puts "required source!"
 
 module Charyb
   class Source < ActiveRecord::Base

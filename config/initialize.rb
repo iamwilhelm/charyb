@@ -1,5 +1,5 @@
 # add paths
-ROOT_PATH = File.join(File.expand_path(File.dirname(__FILE__)), "..")
+ROOT_PATH = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
 $: << 
   File.join(ROOT_PATH, "config") << 
@@ -16,7 +16,7 @@ module Charyb
 
   # The place where we log what's going on
   LOG_ROOT = File.join(ROOT_PATH, "log")
-  DATASOURCE_LOG_PATH = File.join(LOG_ROOT, "datasources.log")
+  DATASOURCES_LOG_PATH = File.join(LOG_ROOT, "datasources.log")
 
   # The place where the datasources database is
   DATASOURCES_ROOT = File.join(ROOT_PATH, "datasources")

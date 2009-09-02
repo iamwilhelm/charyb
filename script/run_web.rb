@@ -1,7 +1,6 @@
 #!/usr/bin/ruby
 
-require 'config/initialize'
-
-# run the sinatra web app
+# currently not being used by rake task since it's just one line
 `ruby src/application.rb`
+
 

@@ -1,5 +1,8 @@
+require 'config/initialize'
+
 require 'rubygems'
 require 'sinatra'
+
 require 'erb'
 require 'models'
 
