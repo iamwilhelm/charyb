@@ -1,8 +1,15 @@
 
 desc "runs Charyb to suck down data"
-task :run do
-  puts "Running Charyb..."
-  load 'script/run.rb'
+namespace :run do
+  task :crawler do
+    puts "Running Charyb crawler..."
+    load 'script/run_crawler.rb'
+  end
+
+  task :web do
+    puts "Running Charyb interface..."
+    load 'script/run_web.rb'
+  end
 end
 
 namespace :view do
