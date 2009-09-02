@@ -15,7 +15,7 @@ module Charyb
     
     class Base
       def initialize(dataware_name = nil)
-        @dataware_name = dataware_name || Charyb::DEFAULT_DATA_WAREHOUSE_NAME
+        @dataware_name = dataware_name || Charyb::DEFAULT_DATAWAREHOUSE_NAME
         @tracker = Charyb::SourceTracker.new
       end
 
