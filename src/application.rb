@@ -11,6 +11,6 @@ get '/' do
 end
 
 get '/sources' do
-  @sources = Charyb::Source.find(:all)
+  @sources = Models::Source.find(:all)
   erb :"sources/index"
 end

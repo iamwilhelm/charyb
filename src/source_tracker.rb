@@ -9,17 +9,17 @@ module Charyb
     end
 
     def datasources
-      Charyb::Source.find(:all)
+      Charyb::Datasource.find(:all)
     end
     
     # Sets up the appropriate tables to store the data sources
     def setup
 
       ActiveRecord::Schema.define do
-        if Source.table_exists?
+        if Datasource.table_exists?
           puts "creating sources table"
           # keeping track of where our sources of data are and their stats
-          create_table :sources do |t|
+          create_table :datasources do |t|
             # Unique identifier for each source
             t.string :url, :limit => 2048, :null => false
             # Gives us a way to know how to process data on the resource
