@@ -1,4 +1,5 @@
 require 'datasource/base'
+require 'datasource/string_filters'
 
 module Datasource
   
@@ -7,6 +8,8 @@ module Datasource
   end  
   
   module ClassMethods
+    include Datasource::StringFilters
+
     def source(uris, selectors = {}, processors = {})
       datasources << Datasource::Base.new(uris, selectors, processors)
     end
