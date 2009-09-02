@@ -1,9 +1,7 @@
 require 'rubygems'
 require 'sinatra'
-require 'active_record'
-
 require 'erb'
-require 'source'
+require 'models'
 
 get '/' do
   erb :index
