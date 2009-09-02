@@ -1,0 +1,6 @@
+<h1>Data Sources</h1>
+<ul>
+  <% @sources.each do |s| %>
+    <li><a href="<%= s.url %>"><%= s.url %></a></li>
+  <% end %>
+</ul>
