@@ -4,13 +4,16 @@ require 'rubygems'
 require 'sinatra'
 
 require 'erb'
-require 'models'
+require 'source_tracker'
+
+# setups up the source tracker database if it hasn't been already
+Charyb::SourceTracker.setup
 
 get '/' do
   erb :index
 end
 
 get '/sources' do
-  @sources = Models::Source.find(:all)
+  @sources = Charyb::SourceTracker.datasources
   erb :"sources/index"
 end
