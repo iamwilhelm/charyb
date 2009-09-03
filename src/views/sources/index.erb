@@ -1,6 +1,10 @@
 <h1>Data Sources</h1>
 <ul>
-  <% @sources.each do |s| %>
+  <% if @sources.each do |s| %>
     <li><a href="<%= s.url %>"><%= s.url %></a></li>
+  <% end.empty? %>
+    <li>There are currently no data sources in the source tracker.</li>
   <% end %>
 </ul>
+
+<a href="/">Back to index</a>
