@@ -1,0 +1,19 @@
+Charyb is a tool to help suck down data and shove them into a simple datawarehouse.
+
+There are two parts, the web interface and the crawler.  
+
+The web interface makes it easier to suck in data from different mime types.  
+Because data scraping isn't yet fully automated, there needs to be a little bit 
+of human intervention. 
+
+The crawler makes use of the data humans entered to figure out how to scrape the 
+data.  It will keep checking those data sources as updates.
+
+To run the web interface:
+
+rake web:run
+
+To run the crawler:
+
+rake crawler:run
+
