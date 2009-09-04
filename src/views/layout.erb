@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>Charyb - Suck in that data</title>    
+    <link href="/css_commons/reset-fonts-grids.css" type="text/css" rel="stylesheet" />
+    <link href="/css_commons/three_column_fixed_layout.css" type="text/css" rel="stylesheet" />
+    <link href="/css_commons/widgets.css"  type="text/css" rel="stylesheet" />
+
+    <link href="/css_commons/clean_pillows_theme.css"  type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="frame">
+
+      <div class="header">
+        <div class="container" style="float: left">
+          <h1>Charyb</h1>
+        </div>
+        <div class="nav container">
+          menu
+        </div>
+      </div>
+      
+      <div class="section" id="notifications">
+      </div>
+
+      <div class="section" id="content">
+        <%= yield %>
+      </div>
+      
+      <div class="footer">
+        <div class="container">
+          Charyb (c) 2009
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>

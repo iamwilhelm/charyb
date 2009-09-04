@@ -1,11 +1,13 @@
-<h1>Data Source</h1>
-<p>
-  <%= @source.url %>
-</p>
-<div>
-  <a href="/">Back to Dashboard</a>
+<div class="container">
+  <h1>Data Source</h1>
+  <p>
+    <%= @source.url %>
+  </p>
+  <div>
+    <a href="/">Back to Dashboard</a>
+  </div>
+  <h2>The page looks like</h2>
+  <iframe src="<%= @source.url %>" style="width: 100%; height: 300px">
+    Your browser doesn't support iframes
+  </iframe>
 </div>
-<h2>The page looks like</h2>
-<iframe src="<%= @source.url %>" style="width: 100%; height: 300px">
-  Your browser doesn't support iframes
-</iframe>

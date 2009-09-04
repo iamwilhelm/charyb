@@ -1,13 +1,7 @@
-# add paths
-ROOT_PATH = File.expand_path(File.join(File.dirname(__FILE__), ".."))
-
-$: << 
-  File.join(ROOT_PATH, "config") << 
-  File.join(ROOT_PATH, "lib") << 
-  File.join(ROOT_PATH, "src") 
-
 # This is where we initialize constants and paths
 module Charyb  
+  ROOT_PATH = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+
   SESSION_PATH = File.join(ROOT_PATH, "tmp")
 
   # The default data warehouse name were we stuff all the formatted data 
@@ -23,6 +17,11 @@ module Charyb
   DATASOURCES_PATH = File.join(DATASOURCES_ROOT, "datasources.db")
 
 end
+
+$: << 
+  File.join(Charyb::ROOT_PATH, "config") << 
+  File.join(Charyb::ROOT_PATH, "lib") << 
+  File.join(Charyb::ROOT_PATH, "src") 
 
 # initialize connection to source tracking database
 require 'rubygems'
