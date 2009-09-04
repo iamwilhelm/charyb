@@ -36,9 +36,9 @@ module Charyb
             # for each source, how do we parse and clean it?
             create_table :cols do |t|
               # ties the modifier to the resource
-              t.references :source, :null => false
+              t.references :datasource, :null => false
               # the column heading and title for this column
-              t.string :title, :limit => 100
+              t.string :title, :limit => 100, :null => false
               # the data type for the column, to know how to treat it
               t.string :data_type, :null => false
               # the units for all the data in this column
