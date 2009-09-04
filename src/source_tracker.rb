@@ -19,7 +19,7 @@ module Charyb
               # Unique identifier for each source
               t.string :url, :limit => 2048, :null => false
               # Gives us a way to know how to process data on the resource
-              t.string :mime_type, :default => "text/html", :null => false
+              t.string :content_type, :default => "text/html", :null => false
               # A short description to help us remember what data's here
               t.string :description, :limit => 255
               # The time last crawled
