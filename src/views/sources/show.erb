@@ -15,8 +15,26 @@
         <li>There are currently no columns</li>
       <% end %>
     </ul>
-    <a href="#">Add a column</a>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $("a.get").click(function() {
+          url = $(this).attr("data-action");
+          target = $(this).attr("data-target");
+          $.get(url, function(data) { 
+            $(target).html(data) 
+          });
+        });
+      });
+    </script>
+    <div id="target">
+    </div>
+    <a href="#" class="get" 
+       data-action="/sources/<%= @source.id %>/cols/new" 
+       data-target="#target">
+      Add a column
+    </a>
   </p>
+  
   <h2>The page looks like</h2>
   <iframe src="<%= @source.url %>" style="width: 100%; height: 300px">
     Your browser doesn't support iframes

@@ -14,8 +14,12 @@ configure do
 
   # sets up the static files path
   set :public, File.join(Charyb::ROOT_PATH, "public")
+
+  # sets up the content types
+  mime :json, "application/json"
 end
 
+# The front page for entering urls
 get '/' do
   erb :index
 end
@@ -24,11 +28,6 @@ end
 get '/sources' do
   @sources = Charyb::SourceTracker.datasources
   erb :"sources/index"
-end
-
-post '/test' do
-  puts params.inspect
-  redirect '/'
 end
 
 # creates a data source
@@ -40,7 +39,6 @@ post '/sources' do
     @source = Models::Datasource.create!("url" => params["source"]["url"], 
                                          "content_type" => response.content_type)
   end
-
   redirect "sources/#{@source.id}"
 end
 
@@ -59,6 +57,13 @@ get '/sources/:id' do
   erb :"sources/show"
 end
 
+# new column ajax
+get '/sources/:source_id/cols/new' do
+  @source = Models::Datasource.find(params["source_id"])
+  @col = @source.cols.new
+  erb :"cols/new", :layout => false 
+end
+
 # gets
-get '/sources/:id/cols/' do
+get '/sources/:source_id/cols/:id' do
 end
