@@ -3,11 +3,27 @@
   <p>
     <%= @source.url %>
   </p>
-  <div>
-    <a href="/">Back to Dashboard</a>
-  </div>
+  <p>
+    <ul id="column_list">
+      <% if @source.cols.each do |col| %>
+      <li>
+        <!-- This should be a partial -->
+        <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
+        <a href="">Edit</a>
+      </li>
+      <% end.empty? %>
+        <li>There are currently no columns</li>
+      <% end %>
+    </ul>
+    <a href="#">Add a column</a>
+  </p>
   <h2>The page looks like</h2>
   <iframe src="<%= @source.url %>" style="width: 100%; height: 300px">
     Your browser doesn't support iframes
   </iframe>
+
+
+  <div>
+    <a href="/">Back to Dashboard</a>
+  </div>
 </div>

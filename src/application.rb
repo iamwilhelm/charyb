@@ -46,7 +46,7 @@ end
 
 # shows a created data source
 get '/sources/:id' do
-  @source = Models::Datasource.find(params["id"])
+  @source = Models::Datasource.find(params["id"], :include => ["cols"])
   @ds_response = open(@source.url) { |f| f.read }
 
   case @source.content_type
@@ -59,3 +59,6 @@ get '/sources/:id' do
   erb :"sources/show"
 end
 
+# gets
+get '/sources/:id/cols/' do
+end
