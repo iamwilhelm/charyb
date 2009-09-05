@@ -15,25 +15,14 @@
         <li>There are currently no columns</li>
       <% end %>
     </ul>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        $("a.get").click(function() {
-          url = $(this).attr("data-action");
-          target = $(this).attr("data-target");
-          $.get(url, function(data) { 
-            $(target).html(data) 
-          });
-        });
-      });
-    </script>
-    <div id="target">
+    <div id="column_new">
     </div>
     <a href="#" class="get" 
-       data-action="/sources/<%= @source.id %>/cols/new" 
-       data-target="#target">
+       data-href="/sources/<%= @source.id %>/cols/new" 
+       data-target="#column_new">
       Add a column
     </a>
-  </p>
+  </div>
   
   <h2>The page looks like</h2>
   <iframe src="<%= @source.url %>" style="width: 100%; height: 300px">
