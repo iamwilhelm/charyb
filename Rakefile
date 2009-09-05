@@ -1,3 +1,4 @@
+require 'config/initialize'
 
 desc "runs Charyb to suck down data"
 namespace :run do
@@ -9,6 +10,14 @@ namespace :run do
   task :web do
     puts "Running Charyb interface..."
     `ruby src/application.rb`
+  end
+end
+
+desc "database "
+namespace :db do
+  task :reset do
+    puts "Deleting the database"
+    `rm -rf #{Charyb::DATASOURCES_PATH}`
   end
 end
 
