@@ -21,7 +21,7 @@ end
 
 # new datasource.  The front page for entering urls
 get '/' do
-  erb :index
+  erb :"/index"
 end
 
 ########## Datasource routes ##########
@@ -29,7 +29,7 @@ end
 # lists data sources in the db
 get '/sources' do
   @sources = Charyb::SourceTracker.datasources
-  erb :"sources/index"
+  erb :"/sources/index"
 end
 
 # shows a created data source
@@ -44,7 +44,7 @@ get '/sources/:id' do
     @doc = Hpricot::XML(@ds_response)
   end
 
-  erb :"sources/show"
+  erb :"/sources/show"
 end
 
 # creates a data source
@@ -62,7 +62,7 @@ end
 # editing data source ajax
 get '/sources/:id/edit' do
   @source = Models::Datasource.find(params["id"])
-  erb :"sources/edit", :layout => false
+  erb :"/sources/edit", :layout => false
 end
 
 # updating data source ajax
@@ -78,7 +78,7 @@ end
 get '/sources/:source_id/cols/new' do
   @source = Models::Datasource.find(params["source_id"])
   @col = @source.cols.new
-  erb :"cols/new", :layout => false 
+  erb :"/cols/new", :layout => false 
 end
 
 # create column ajax
