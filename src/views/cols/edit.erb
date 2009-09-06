@@ -1,4 +1,5 @@
 <form method="post" action="/sources/<%= @source.id  %>/cols">
+  <input type="hidden" name="_method" value="put" />
   <%= erb :"cols/_form", :layout => false %>
-  <input type="submit" value="Create" />
+  <input type="submit" value="Update" />
 </form>
