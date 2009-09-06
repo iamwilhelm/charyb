@@ -1,12 +1,12 @@
 <div class="container">
 
   <div id="datasource_info">
-    <%= erb :"sources/_source", :layout => false %>
+    <%= erb :"datasources/_source", :layout => false %>
   </div>
 
   <div id="col_info">
     <ul id="column_list">
-      <% if @source.cols.each do |col| %>
+      <% if @datasource.cols.each do |col| %>
         <li>
           <!-- This should be a partial -->
           <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
@@ -19,14 +19,14 @@
     <div id="column_new">
     </div>
     <a href="#" class="get" 
-       data-href="/sources/<%= @source.id %>/cols/new" 
+       data-href="/datasources/<%= @datasource.id %>/cols/new" 
        data-target="#column_new">
       Add a column
     </a>
   </div>
   
   <h2>The page looks like</h2>
-  <iframe src="<%= @source.url %>" style="width: 100%; height: 300px">
+  <iframe src="<%= @datasource.url %>" style="width: 100%; height: 300px">
     Your browser doesn't support iframes
   </iframe>
 

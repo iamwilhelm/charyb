@@ -2,8 +2,8 @@
   <h1>Data Sources</h1>
   <p>
     <ul>
-      <% if @sources.each do |s| %>
-      <li><a href="sources/<%= s.id %>"><%= s.url %></a></li>
+      <% if @datasources.each do |s| %>
+      <li><a href="/datasources/<%= s.id %>"><%= s.url %></a></li>
       <% end.empty? %>
       <li>There are currently no data sources in the source tracker.</li>
       <% end %>

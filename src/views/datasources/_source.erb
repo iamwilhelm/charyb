@@ -1,0 +1,12 @@
+<h1><%= @datasource.title %> 
+  <span>
+    <a href="#" class="get"
+       data-href="/datasources/<%= @datasource.id %>/edit" 
+       data-target="#datasource_info">Edit</a>
+  </span>
+</h1>
+
+<h3><%= @datasource.url %></h3>
+<p>
+  <%= @datasource.description %>
+</p>
