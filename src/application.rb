@@ -19,27 +19,17 @@ configure do
   mime :json, "application/json"
 end
 
-# The front page for entering urls
+# new datasource.  The front page for entering urls
 get '/' do
   erb :index
 end
+
+########## Datasource routes ##########
 
 # lists data sources in the db
 get '/sources' do
   @sources = Charyb::SourceTracker.datasources
   erb :"sources/index"
-end
-
-# creates a data source
-post '/sources' do
-  # TODO this can be refactored into the source tracker
-  @source = Models::Datasource.find_by_url(params["source"]["url"])
-  if @source.nil?
-    response = open(params["source"]["url"])
-    @source = Models::Datasource.create!("url" => params["source"]["url"], 
-                                         "content_type" => response.content_type)
-  end
-  redirect "sources/#{@source.id}"
 end
 
 # shows a created data source
@@ -57,6 +47,26 @@ get '/sources/:id' do
   erb :"sources/show"
 end
 
+# editing data source ajax
+get '/sources/:id/edit' do
+  @source = Models::Datasource.find(params["source_id"])
+  erb :"sources/edit.erb"
+end
+
+# creates a data source
+post '/sources' do
+  # TODO this can be refactored into the source tracker
+  @source = Models::Datasource.find_by_url(params["source"]["url"])
+  if @source.nil?
+    response = open(params["source"]["url"])
+    @source = Models::Datasource.create!("url" => params["source"]["url"], 
+                                         "content_type" => response.content_type)
+  end
+  redirect "sources/#{@source.id}"
+end
+
+########## Column routes ##########
+
 # new column ajax
 get '/sources/:source_id/cols/new' do
   @source = Models::Datasource.find(params["source_id"])
@@ -64,6 +74,6 @@ get '/sources/:source_id/cols/new' do
   erb :"cols/new", :layout => false 
 end
 
-# gets
+# shows a column?
 get '/sources/:source_id/cols/:id' do
 end

@@ -18,6 +18,8 @@ module Charyb
             create_table :datasources do |t|
               # Unique identifier for each source
               t.string :url, :limit => 2048, :null => false
+              # Optional title
+              t.string :title, :string => 100, :default => "Untitled Datasource", :null => true
               # Gives us a way to know how to process data on the resource
               t.string :content_type, :default => "text/html", :null => false
               # A short description to help us remember what data's here
