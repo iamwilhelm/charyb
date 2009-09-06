@@ -29,7 +29,7 @@ end
 # lists data sources in the db
 get '/sources' do
   @sources = Charyb::SourceTracker.datasources
-  erb :"/sources/index"
+  erb :"sources/index"
 end
 
 # shows a created data source
@@ -44,7 +44,7 @@ get '/sources/:id' do
     @doc = Hpricot::XML(@ds_response)
   end
 
-  erb :"/sources/show"
+  erb :"sources/show"
 end
 
 # creates a data source
@@ -62,14 +62,14 @@ end
 # editing data source ajax
 get '/sources/:id/edit' do
   @source = Models::Datasource.find(params["id"])
-  erb :"/sources/edit", :layout => false
+  erb :"sources/edit", :layout => false
 end
 
 # updating data source ajax
 put '/sources/:id' do
   @source = Models::Datasource.find(params["id"])
   @source.update_attributes!(params["source"])
-  redirect "/sources/#{@source.id}"
+  erb :"sources/_source", :layout => false
 end
 
 ########## Column routes ##########
@@ -82,7 +82,8 @@ get '/sources/:source_id/cols/new' do
 end
 
 # create column ajax
-get '/sources/:source_id/cols' do
+post '/sources/:source_id/cols' do
   @source = Models::Datasource.find(params["source_id"])
   @col = @source.cols.new(params["col"])
+  # ??
 end
