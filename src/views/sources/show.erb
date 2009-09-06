@@ -1,18 +1,7 @@
 <div class="container">
 
   <div id="datasource_info">
-    <h1><%= @source.title %> 
-      <span>
-        <a href="#" class="get"
-           data-href="/sources/<%= @source.id %>/edit" 
-           data-target="#datasource_info">Edit</a>
-      </span>
-    </h1>
-    
-    <h3><%= @source.url %></h3>
-    <p>
-      <%= @source.description %>
-    </p>
+    <%= erb :"sources/_source", :layout => false %>
   </div>
 
   <div id="col_info">
