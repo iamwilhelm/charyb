@@ -49,8 +49,8 @@ end
 
 # editing data source ajax
 get '/sources/:id/edit' do
-  @source = Models::Datasource.find(params["source_id"])
-  erb :"sources/edit.erb"
+  @source = Models::Datasource.find(params["id"])
+  erb :"sources/edit", :layout => false
 end
 
 # creates a data source

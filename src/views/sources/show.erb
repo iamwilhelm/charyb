@@ -1,16 +1,28 @@
 <div class="container">
-  <h1>Data Source</h1>
-  <p>
-    <%= @source.url %>
-  </p>
-  <p>
+
+  <div id="datasource_info">
+    <h1><%= @source.title %> 
+      <span>
+        <a href="#" class="get"
+           data-href="/sources/<%= @source.id %>/edit" 
+           data-target="#datasource_info">Edit</a>
+      </span>
+    </h1>
+    
+    <h3><%= @source.url %></h3>
+    <p>
+      <%= @source.description %>
+    </p>
+  </div>
+
+  <div id="col_info">
     <ul id="column_list">
       <% if @source.cols.each do |col| %>
-      <li>
-        <!-- This should be a partial -->
-        <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
-        <a href="">Edit</a>
-      </li>
+        <li>
+          <!-- This should be a partial -->
+          <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
+          <a href="">Edit</a>
+        </li>
       <% end.empty? %>
         <li>There are currently no columns</li>
       <% end %>

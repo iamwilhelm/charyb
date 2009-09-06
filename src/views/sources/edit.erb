@@ -1,0 +1,12 @@
+<h2>Edit Datasource</h2>
+<form method="put" action="/sources/<%= @source.id %>">
+  <label for="source[title]">Title:</label><br/>
+  <input type="text" name="source[title]" value="<%= @source.title %>" /><br/>
+  <label for="source[url]">URL:</label><br/>
+  <input type="text" name="source[url]" value="<%= @source.url %>" /><br/>
+  <label for="source[description]">Description:</label><br/>
+  <textarea name="source[description]">
+    <%= @source.description %>
+  </textarea><br/>
+  <input type="submit" value="update" />
+</form>
