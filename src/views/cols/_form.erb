@@ -1,4 +1,6 @@
-<% %w(title data_type units column_position).each do |col_name| %>
+<% %w(title heading_selector column_selector converter data_type units).each do |col_name| %>
   <label for="col[<%= col_name %>]"><%= col_name.gsub(/_/, " ").capitalize %>:</label><br/>
   <input type="text" name="col[<%= col_name %>]" /><br/>
 <% end %>
+<label for="col[notes]">Notes:</label><br/>
+<textarea name="col[notes]"></textarea>
