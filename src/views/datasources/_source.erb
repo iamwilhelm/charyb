@@ -1,7 +1,7 @@
 <h1><%= @datasource.title %> 
   <span>
-    <a href="#" class="get"
-       data-href="/datasources/<%= @datasource.id %>/edit" 
+    <a href="#" rel="rest_get"
+       data-action="/datasources/<%= @datasource.id %>/edit" 
        data-target="#datasource_info">Edit</a>
   </span>
 </h1>
