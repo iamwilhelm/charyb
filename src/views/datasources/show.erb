@@ -16,13 +16,13 @@
     <div id="col_info" class="half">
       <ul id="column_list">
         <% if @datasource.cols.each do |col| %>
-        <li>
-          <!-- This should be a partial -->
-          <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
-          <a href="">Edit</a>
-        </li>
+          <li>
+            <!-- This should be a partial -->
+            <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
+            <a href="">Edit</a>
+          </li>
         <% end.empty? %>
-        <li>There are currently no columns</li>
+          <li>There are currently no columns</li>
         <% end %>
       </ul>
       <div id="column_new">
