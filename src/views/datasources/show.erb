@@ -4,34 +4,35 @@
     <%= erb :"datasources/_source", :layout => false %>
   </div>
 
-  <div id="col_info">
-    <ul id="column_list">
-      <% if @datasource.cols.each do |col| %>
+  <div>
+    <a href="/">Back to Dashboard</a>
+  </div>
+  
+  <div>
+    <div id="remote_page" class="half" style="overflow: scroll; height: 500px;">
+      <%= (@doc/"body").inner_html %>
+    </div>
+
+    <div id="col_info" class="half">
+      <ul id="column_list">
+        <% if @datasource.cols.each do |col| %>
         <li>
           <!-- This should be a partial -->
           <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
           <a href="">Edit</a>
         </li>
-      <% end.empty? %>
+        <% end.empty? %>
         <li>There are currently no columns</li>
-      <% end %>
-    </ul>
-    <div id="column_new">
+        <% end %>
+      </ul>
+      <div id="column_new">
+      </div>
+      <a href="#" rel="rest_get" 
+         data-action="/datasources/<%= @datasource.id %>/cols/new" 
+         data-target="#column_new">
+        Add a column
+      </a>
     </div>
-    <a href="#" rel="rest_get" 
-       data-action="/datasources/<%= @datasource.id %>/cols/new" 
-       data-target="#column_new">
-      Add a column
-    </a>
   </div>
-  
-  <h2>The page looks like</h2>
-  <iframe src="<%= @datasource.url %>" style="width: 100%; height: 300px">
-    Your browser doesn't support iframes
-  </iframe>
 
-
-  <div>
-    <a href="/">Back to Dashboard</a>
-  </div>
 </div>
