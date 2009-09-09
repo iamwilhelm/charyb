@@ -42,9 +42,20 @@ get '/datasources/:id' do
   @datasource = Models::Datasource.find(params["id"], :include => ["cols"])
   @ds_response = open(@datasource.url) { |f| f.read }
 
+  # filter out certain tags
+  puts @ds_response.length
+  @ds_response.gsub!(/<script.*>.*<\/script>/, "")
+  puts @ds_response.length
+  @ds_response.gsub!(/<script.*\/>/, "")
+  puts @ds_response.length
+  @ds_response.gsub!(/<object.*>.*<\/object>/, "")
+  puts @ds_response.length
+  @ds_response.gsub!(/<embed.*>.*<\/embed>/, "")
+  puts @ds_response.length
+
   case @datasource.content_type
   when "text/html"
-    @doc = Hpricot(@ds_response)
+    @doc = Hpricot(@ds_response, :fixup_tags => true)
   when "application/xml"
     @doc = Hpricot::XML(@ds_response)
   end
