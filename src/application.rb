@@ -91,6 +91,8 @@ end
 # create column ajax
 post '/datasources/:source_id/cols' do
   @datasource = Models::Datasource.find(params["source_id"])
-  @col = @datasource.cols.new(params["col"])
-  # ??
+  @col = @datasource.cols.create!(params["col"])
+
+  redirect back
 end
+
