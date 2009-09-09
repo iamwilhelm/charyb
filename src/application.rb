@@ -107,3 +107,9 @@ post '/datasources/:source_id/cols' do
   redirect back
 end
 
+# edit column ajax
+get '/datasources/:source_id/cols/:id/edit' do
+  @datasource = Models::Datasource.find(params["source_id"])
+  @col = @datasource.cols.find(params["id"])
+  erb :"/cols/edit", :layout => false
+end
