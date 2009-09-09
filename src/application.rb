@@ -113,3 +113,12 @@ get '/datasources/:source_id/cols/:id/edit' do
   @col = @datasource.cols.find(params["id"])
   erb :"/cols/edit", :layout => false
 end
+
+# update column 
+put '/datasources/:source_id/cols/:id' do
+  @datasource = Models::Datasource.find(params["source_id"])
+  @col = @datasource.cols.find(params["id"])
+  @col.update_attributes(params["col"])
+  
+  redirect back
+end

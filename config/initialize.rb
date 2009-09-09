@@ -34,4 +34,5 @@ module Charyb
   # establish the active record connection to datasource db
   @connection = ActiveRecord::Base.establish_connection(:adapter => "sqlite3",
                                                         :dbfile => DATASOURCES_PATH)
+
 end
