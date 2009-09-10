@@ -1,12 +1,15 @@
-<h1><%= @datasource.title %> 
-  <span>
-    <a href="#" rel="rest_get"
-       data-action="/datasources/<%= @datasource.id %>/edit" 
-       data-target="#datasource_info">Edit</a>
-  </span>
-</h1>
+<div id="datasource_info">
+  <h1><%= @datasource.title %> 
+    <span>
+      <a href="#"
+         rel="rest_get"
+         data-action="/datasources/<%= @datasource.id %>/edit" 
+         data-target="#datasource_info">Edit</a>
+    </span>
+  </h1>
 
-<h3><%= @datasource.url %></h3>
-<p>
-  <%= @datasource.description %>
-</p>
+  <h3><%= @datasource.url %></h3>
+  <p>
+    <%= @datasource.description %>
+  </p>
+</div>
