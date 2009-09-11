@@ -34,5 +34,42 @@ sudo gem install -d sinatra
 sudo gem install -d couchrest
 sudo gem install -d hpricot
 
+h2. Architecture
 
+There are two major components:  The web interface and the crawler.  The web 
+interface is used to for the human in the loop to more easily say how to suck 
+in data for a datasource.  Right now, it only does html tables.  Eventually, 
+it'll also do CSV files as well. It stores this information in the 
+SourceTracker, which is a wrapper around an SQLite database.
 
+The crawler is run separately and uses the SourceTracker's information about 
+where a datasource can be found and how to suck it in.  It uses css selectors 
+to find these elements.  Basically, if you know how to write CSS, you know 
+how to use css selectors.  You can read about them:
+
+an overview: 
+http://wiki.github.com/whymirror/hpricot/supported-css-selectors
+a big tutorial:
+http://css.maxdesign.com.au/selectutorial/
+
+When the crawler sucks in the data and cleaned it properly, it then pushes it 
+to the datawarehouse, which we currently use couchdb for.  Then teabag later 
+on queries couchdb when it gets web requests from the outside world.  
+
+Which part don't you understand?  Or do you not know where to start?
+
+The web part starts with src/application.rb  it requires 'config/initialize' 
+at the top, which sets all the global constants and paths.  you can find it 
+in config/initialize.
+
+Then the rest of that code is in sinatra's DSL.  I suggest reading 
+http://www.sinatrarb.com/intro.html first, and then using 
+http://www.sinatrarb.com/book.html as a reference.
+
+The crawler starts with crawler.rb, but I haven't finished it yet.  Right 
+now, the source tracker isn't finalized yet either, so the web interface 
+directly uses the activerecord objects.  activerecord is an ORM object.  
+http://api.rubyonrails.org/classes/ActiveRecord/Base.html
+
+If you have specific questions, don't hesitate to ask either email or by 
+phone.
