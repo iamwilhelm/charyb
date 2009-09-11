@@ -1,3 +1,5 @@
+h2. What is Charyb?
+
 Charyb is a tool to help suck down data and shove them into a simple datawarehouse.
 
 There are two parts, the web interface and the crawler.  
@@ -9,11 +11,28 @@ of human intervention.
 The crawler makes use of the data humans entered to figure out how to scrape the 
 data.  It will keep checking those data sources as updates.
 
+h2. To run it
+
 To run the web interface:
-
+<pre>
 rake web:run
-
+</pre>
 To run the crawler:
-
+<pre>
 rake crawler:run
+</pre>
+
+h2. Installation
+
+if you haven't added the github source, do it by doing:
+
+sudo gem source http://gems.github.com
+
+Then install the following gems:
+
+sudo gem install -d sinatra
+sudo gem install -d couchrest
+sudo gem install -d hpricot
+
+
 
