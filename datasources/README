@@ -1,0 +1,3 @@
+This directory is intentionally blank.  Currently, it houses the SQLite db file
+that gets created when the web interface gets started up.  Eventually, 
+there will be a rake task that generates and sets up the db.
