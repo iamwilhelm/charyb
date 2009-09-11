@@ -1,5 +1,8 @@
-<form method="post" action="/datasources/<%= @datasource.id  %>/cols/<%= @col.id %>">
+<form method="post" class="previewable"
+      action="/datasources/<%= @datasource.id  %>/cols/<%= @col.id %>">
   <input type="hidden" name="_method" value="put" />
   <%= erb :"cols/_form", :layout => false %>
+  <input id="column_<%= @col.id %>_preview" class="preview" 
+         type="button" value="Preview" />
   <input type="submit" value="Update" />
 </form>

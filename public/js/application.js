@@ -5,11 +5,11 @@ $(document).ready(function() {
      */
     parse_data_attrs = function(elem) {
         var hash = new Object();
-        var attr_array = elem.attributes;
         
         // filter all attributes that start with "data-" and create
         // 
-        $.each($.grep(attr_array, function(attr, i) {
+        $.each($.grep(elem.attributes, 
+                      function(attr, i) {
                           return attr.name.match(/^data-/);
                       }), 
                function() {
@@ -17,7 +17,7 @@ $(document).ready(function() {
                });
 
         return hash;
-    }
+    };
 
     /* Makes an GET ajax link and posts the result from server in the target 
      * DOM element
@@ -38,15 +38,45 @@ $(document).ready(function() {
      *               data-target="#post_new"
      *   </a>
      */
-    $("a[rel*=rest_get]").click(
-        function() {
-            var data = parse_data_attrs(this);
+    $("a[rel*=rest_get]").live("click", 
+        function(event) {
+            var data = parse_data_attrs(event.target);
 
             $(data.target).html("Loading...");
 
             $.get(data.action, function(response_html) { 
                       $(data.target).html(response_html);
                   });
+        });
+
+    /* Makes all preview buttons in previewable forms trigger a custom event 
+     * called preview on the form
+     */
+    $("form input.preview").live("click",
+        function(event) {
+            // trigger the preview event in the surrounding closest parent form
+            var form_elem = $(event.target).closest("form").trigger("preview");
+        });
+
+    toggleColor = function(form_element, input_field_name, color) {
+        var css_selector = $(form_element).find("input[name=" + input_field_name + "]").val();
+        var last_css_selector = css_selector;
+        var last_heading_color = $(last_css_selector).css("background-color");
+        
+        return function() {
+            // uncolor previously selected
+            $(last_css_selector).css("background-color", last_heading_color);
+            
+            // color those that are selected and queue uncoloring
+            $(css_selector).css("background-color", color);
+        };
+    };
+
+    $("form.previewable").live("preview", 
+        function(event) {
+            // TODO this function body here is application specific (refactor)
+            toggleColor(event.target, "col[heading_selector]", "yellow")();
+            toggleColor(event.target, "col[column_selector]", "orange")();
         });
 
 });
