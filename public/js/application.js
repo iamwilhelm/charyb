@@ -60,23 +60,16 @@ $(document).ready(function() {
 
     toggleColor = function(form_element, input_field_name, color) {
         var css_selector = $(form_element).find("input[name=" + input_field_name + "]").val();
-        var last_css_selector = css_selector;
-        var last_heading_color = $(last_css_selector).css("background-color");
-        
-        return function() {
-            // uncolor previously selected
-            $(last_css_selector).css("background-color", last_heading_color);
-            
-            // color those that are selected and queue uncoloring
-            $(css_selector).css("background-color", color);
-        };
+        $(css_selector).effect("highlight", 
+                               { color: color },
+                               3000);
     };
 
     $("form.previewable").live("preview", 
         function(event) {
             // TODO this function body here is application specific (refactor)
-            toggleColor(event.target, "col[heading_selector]", "yellow")();
-            toggleColor(event.target, "col[column_selector]", "orange")();
+            toggleColor(event.target, "col[heading_selector]", "orange");
+            toggleColor(event.target, "col[column_selector]", "yellow");
         });
 
 });
