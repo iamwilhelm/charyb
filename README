@@ -17,6 +17,8 @@ To run the web interface:
 <pre>
 rake web:run
 </pre>
+And then go to http://localhost:4567
+
 To run the crawler:
 <pre>
 rake crawler:run
