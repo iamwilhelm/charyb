@@ -13,7 +13,7 @@ module Charyb
   DATASOURCES_LOG_PATH = File.join(LOG_ROOT, "datasources.log")
 
   # The place where the datasources database is
-  DATASOURCES_ROOT = File.join(ROOT_PATH, "datasources")
+  DATASOURCES_ROOT = File.join(ROOT_PATH, "db")
   DATASOURCES_PATH = File.join(DATASOURCES_ROOT, "datasources.db")
 
 end
