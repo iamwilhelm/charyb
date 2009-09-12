@@ -18,10 +18,16 @@ module Charyb
 
 end
 
+# add application's source directories to lib search path
 $: << 
   File.join(Charyb::ROOT_PATH, "config") << 
   File.join(Charyb::ROOT_PATH, "lib") << 
   File.join(Charyb::ROOT_PATH, "src") 
+
+# add the core extensions to the Ruby language
+Dir.glob(File.join(Charyb::ROOT_PATH, "lib/core_ext/*.rb")).each do |core_ext_path|
+  require core_ext_path
+end
 
 # initialize connection to source tracking database
 require 'rubygems'
