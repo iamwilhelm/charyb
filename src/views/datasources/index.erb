@@ -12,11 +12,7 @@
     <ul>
       <% if @datasources.each do |s| %>
       <li><a href="/datasources/<%= s.id %>">
-          <% if s.title == "Untitled Datasource" %>
-            <%= s.url %>
-          <% else %>
-            <%= s.title %>
-          <% end %>
+          <%= s.title %>
       </a></li>
       <% end.empty? %>
       <li>There are currently no data sources in the source tracker.</li>

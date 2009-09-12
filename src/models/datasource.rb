@@ -16,6 +16,10 @@ module Models
     validates_presence_of :url, :message => "can't be blank"
     validates_presence_of :content_type, :message => "can't be blank"
 
+    def title
+      (attributes["title"] == "Untitled Datasource") ? url : attributes["title"]
+    end
+
     # see if this datasource needs to be crawled again
     def stale?(time = Time.now)
       updated_at < time
