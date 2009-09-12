@@ -26,7 +26,7 @@ end
 
 # new datasource.  The front page for entering urls
 get '/' do
-  erb :"/index"
+  redirect "/datasources"
 end
 
 ########## Datasource routes ##########
