@@ -1,6 +1,5 @@
 class Object
-  if RUBY_VERSION < "1.9.0"
-    
+  if Object.method_defined?("tap")
     # This function allows you to tap inside of an object during a 
     # method chain, to either examine the state of the object 
     # or manipulate it.  It is similar to returning()
@@ -12,6 +11,5 @@ class Object
       yield self
       self
     end
-
   end
 end
