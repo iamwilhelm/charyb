@@ -16,12 +16,33 @@ namespace :crawler do
   end
 end
 
-desc "database "
+desc "database stuff"
 namespace :db do
   desc "resets the database"
   task :reset do
     puts "Deleting the database"
     `rm -rf #{Charyb::DATASOURCES_PATH}`
+  end
+end
+
+desc "generators"
+namespace :generate do
+  desc "rake generate:migration[name of migration]"
+  task :migration, :name do |t, args|
+    puts "Generating migration"
+    class_name = args.name.gsub(/\s+/, "_")
+    filename = Time.now.strftime("%Y%m%d_%H%M%S") + "_" + class_name + ".rb"
+    File.open(File.join(Charyb::MIGRATIONS_ROOT, filename), 'w') do |f|
+      f.write <<-MIGRATION_CODE
+class #{class_name.camelize} < ActiveRecord::Migration
+  def self.up
+  end
+  
+  def self.down
+  end
+end
+      MIGRATION_CODE
+    end
   end
 end
 

@@ -15,6 +15,7 @@ module Charyb
   # The place where the datasources database is
   DATASOURCES_ROOT = File.join(ROOT_PATH, "db")
   DATASOURCES_PATH = File.join(DATASOURCES_ROOT, "datasources.db")
+  MIGRATIONS_ROOT = File.join(DATASOURCES_ROOT, "migrations")
 
 end
 
