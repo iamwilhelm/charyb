@@ -6,20 +6,22 @@ module Charyb
     class << self
 
       def datasources
-        Models::Datasource.find(:all)
+        Source::Datasource.find(:all)
       end
 
       # Sets up the appropriate tables to store the data sources
       def setup
         ActiveRecord::Schema.define do
-          unless Models::Datasource.table_exists?
-            puts "creating sources table"
+          unless Source::Datasource.table_exists?
+            puts "creating datasources table"
             # keeping track of where our sources of data are and their stats
             create_table :datasources do |t|
               # Unique identifier for each source
               t.string :url, :limit => 2048, :null => false
               # Optional title
-              t.string :title, :string => 100, :default => "Untitled Datasource", :null => true
+              t.string :title, :limit => 100, :default => "Untitled Datasource", :null => true
+              # Type of datasource dictacts how to process it
+              t.string :type, :limit => 20, :null => false
               # Gives us a way to know how to process data on the resource
               t.string :content_type, :default => "text/html", :null => false
               # A short description to help us remember what data's here
@@ -33,7 +35,7 @@ module Charyb
             end 
           end
           
-          unless Models::Col.table_exists?
+          unless Col.table_exists?
             puts "creating cols table"
             # for each source, how do we parse and clean it?
             create_table :cols do |t|
