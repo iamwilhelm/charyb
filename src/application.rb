@@ -85,6 +85,14 @@ get '/datasources/:id/:type' do
   erb :"/datasources/show_#{params["type"]}"
 end
 
+# deletes a data source
+delete '/datasources/:id' do
+  @datasource = Source::Datasource.find(params["id"])
+  @datasource.destroy
+
+  redirect back
+end
+
 ########## Column routes ##########
 
 # new column ajax

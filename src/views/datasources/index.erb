@@ -19,9 +19,10 @@
           </td><td>
             <%= s.cols.count %>
           </td><td>
-            <a href="">
-              Delete
-            </a>
+            <form method="post" action="/datasources/<%= s.id %>">
+              <input type="hidden"name="_method" value="delete" />
+              <div><button type="submit">Delete</button></div>
+            </form>
         </td></tr>
       <% end.empty? %>
       <tr><td>There are currently no data sources in the source tracker.</td></tr>

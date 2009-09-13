@@ -10,7 +10,7 @@ module Source
 
   # The base class for different datasources
   class Datasource < ActiveRecord::Base
-    has_many :cols
+    has_many :cols, :dependent => :destroy
 
     validates_presence_of :url, :message => "can't be blank"
     validates_presence_of :type, :message => "can't be blank"
