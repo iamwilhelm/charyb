@@ -40,6 +40,23 @@ namespace :db do
     ActiveRecord::Migration.verbose = true
     ActiveRecord::Migrator.migrate("db/migrations")
   end
+
+  namespace :schema do
+    desc "dumps the database schema"
+    task :dump do
+      puts "dumping the database schema to #{Charyb::SCHEMA_PATH}"
+      File.open(Charyb::SCHEMA_PATH, 'w') do |file|
+        ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
+      end
+    end
+
+    desc "loads the database schema"
+    task :load do
+      puts "loading the database schema from db/schema.rb"
+      load(Charyb::SCHEMA_PATH)
+    end
+  end
+  
 end
 
 desc "generators"

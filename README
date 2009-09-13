@@ -11,30 +11,36 @@ of human intervention.
 The crawler makes use of the data humans entered to figure out how to scrape the 
 data.  It will keep checking those data sources as updates.
 
-h2. To run it
-
-To run the web interface:
-<pre>
-rake web:run
-</pre>
-And then go to http://localhost:4567
-
-To run the crawler:
-<pre>
-rake crawler:run
-</pre>
-
 h2. Installation
 
 if you haven't added the github source, do it by doing:
 
-sudo gem source http://gems.github.com
+  sudo gem source http://gems.github.com
 
 Then install the following gems:
 
-sudo gem install -d sinatra
-sudo gem install -d couchrest
-sudo gem install -d hpricot
+  sudo gem install -d sinatra
+  sudo gem install -d couchrest
+  sudo gem install -d hpricot
+
+h2. Setup
+
+You must set up the database first.
+
+  rake db:schema:load
+
+h2. To run it
+
+To run the web interface:
+
+  rake web:run
+
+And then go to http://localhost:4567
+
+To run the crawler:
+
+  rake crawler:run
+
 
 h2. Architecture
 

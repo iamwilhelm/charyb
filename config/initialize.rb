@@ -16,7 +16,7 @@ module Charyb
   DATASOURCES_ROOT = File.join(ROOT_PATH, "db")
   DATASOURCES_PATH = File.join(DATASOURCES_ROOT, "datasources.db")
   MIGRATIONS_ROOT = File.join(DATASOURCES_ROOT, "migrations")
-
+  SCHEMA_PATH = File.join(DATASOURCES_ROOT, "schema.rb")
 end
 
 # add application's source directories to lib search path
