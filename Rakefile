@@ -1,5 +1,15 @@
 require 'config/initialize'
 
+require 'rake'
+require 'rake/testtask'
+require 'rake/rdoctask'
+
+desc "loads the right environment"
+task :environment do
+  # nothing here yet.
+  # suppose to do what config/initialize does"
+end
+
 namespace :web do
   desc "runs the web interface to help screen scrape"
   task :run do
@@ -23,6 +33,13 @@ namespace :db do
     puts "Deleting the database"
     `rm -rf #{Charyb::DATASOURCES_PATH}`
   end
+
+  desc "migrates the database"
+  task :migrate => :environment do
+    ActiveRecord::Base.logger = Logger.new(STDOUT)
+    ActiveRecord::Migration.verbose = true
+    ActiveRecord::Migrator.migrate("db/migrations")
+  end
 end
 
 desc "generators"
@@ -31,17 +48,16 @@ namespace :generate do
   task :migration, :name do |t, args|
     puts "Generating migration"
     class_name = args.name.gsub(/\s+/, "_")
-    filename = Time.now.strftime("%Y%m%d_%H%M%S") + "_" + class_name + ".rb"
+    filename = Time.now.strftime("%Y%m%d%H%M%S") + "_" + class_name + ".rb"
     File.open(File.join(Charyb::MIGRATIONS_ROOT, filename), 'w') do |f|
-      f.write <<-MIGRATION_CODE
-class #{class_name.camelize} < ActiveRecord::Migration
-  def self.up
-  end
-  
-  def self.down
-  end
-end
-      MIGRATION_CODE
+      f.write %Q{
+        class #{class_name.camelize} < ActiveRecord::Migration
+          def self.up
+          end
+   
+          def self.down
+          end
+        end}
     end
   end
 end

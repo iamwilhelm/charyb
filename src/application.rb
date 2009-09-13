@@ -8,9 +8,6 @@ require 'erb'
 require 'source_tracker'
 
 configure do
-  # setups up the source tracker database if it hasn't been already
-  Charyb::SourceTracker.setup
-
   # sets up the static files path
   set :public, File.join(Charyb::ROOT_PATH, "public")
 
