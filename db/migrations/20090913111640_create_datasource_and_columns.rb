@@ -26,16 +26,18 @@ class CreateDatasourceAndColumns < ActiveRecord::Migration
       t.references :datasource, :null => false
       # the column heading and title for this column
       t.string :title, :limit => 100, :null => false
+      # the data type for the column, to know how to treat it
+      t.string :data_type, :null => false
+      # the units for all the data in this column
+      t.string :units, :null => false
+      # the multiplier for units to the value in the columns (can be in sci notation)
+      t.string :multiplier, :limit => 10, :null => true, :default => 1
       # the CSS expression or XPATH to find the heading
       t.string :heading_selector, :limit => 255, :null => false
       # the CSS expression or XPATH to find the columns
       t.string :column_selector, :limit => 255, :null => false              
       # how to clean string input from parsing into a format we want
       t.string :converter
-      # the data type for the column, to know how to treat it
-      t.string :data_type, :null => false
-      # the units for all the data in this column
-      t.string :units, :null => false
       # Any extraneous notes about the column as foot notes
       t.text :notes
       # timestamps for this db record
