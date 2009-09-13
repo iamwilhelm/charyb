@@ -34,10 +34,6 @@ end
 # add the required gems
 require 'rubygems'
 
-# add active_support's misc object methods
-# http://api.rubyonrails.org/classes/Object.html
-require 'active_support/core_ext/object/misc'
-
 # add active record for database access
 require 'active_record'
 
