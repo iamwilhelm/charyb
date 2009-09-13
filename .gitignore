@@ -13,4 +13,4 @@ coverage/*
 **/.DS_Store
 .dotest/*
 
-datasources/*.db
+db/*.db
