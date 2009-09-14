@@ -30,7 +30,7 @@ module Source
     # shows the raw response body text of the datasource
     # 
     # NOTE this might end up being a long running process and will have to 
-    # be a problem for web interface
+    # be a problem for web interface or for the crawler
     def response_body(reload = false)
       if reload or @body.nil?
         @body = open(url) { |f| f.read }
@@ -53,6 +53,9 @@ module Source
     def stale?(time = Time.now)
       updated_at < time
     end
+
+    # raised when a polymorphic attribute needs to be overriden
+    class MethodOverride < Exception; end
   end
 
 end
