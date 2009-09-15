@@ -8,14 +8,19 @@ module Source
     include Source::StringFilters
 
     # returns a filtered response body
-    def response_body(reload)
+    def response_body(reload = false)
       rm_script_tags(super(reload))
     end
 
     # encapulates a response body in an Hpricot object so it can be 
     # traversed
     def document(reload = false)
-      @doc = Hpricot(response_body(reload), :fixup_tags => true)
+      @doc = Hpricot(response_body(reload))
+    end
+    
+    # displays datasource for human intervention of data extraction
+    def display
+      (@doc/"body").inner_html
     end
     
     # retrieve and extract data from the datasource

@@ -84,7 +84,7 @@ get '/datasources/:id/:type' do
     find(params["id"], :include => ["cols"])
   @doc = @datasource.document
   
-  erb :"/datasources/show_#{params["type"]}"
+  erb :"/datasources/show"
 end
 
 # deletes a data source
