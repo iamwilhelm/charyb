@@ -4,7 +4,9 @@ require 'openssl'
 require 'core_ext/enumerable'
 
 # we do this so we can visit SSL pages
-OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+Kernel::silence_warnings do
+  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+end
 
 module Source
 
