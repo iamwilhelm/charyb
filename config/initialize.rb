@@ -40,6 +40,9 @@ require 'active_record'
 # parses HTML files for html data source parser
 require 'hpricot'
 
+# application wide requires
+require 'models'
+
 module Charyb
   # set the datasource logger
   ActiveRecord::Base.logger = Logger.new(DATASOURCES_LOG_PATH)

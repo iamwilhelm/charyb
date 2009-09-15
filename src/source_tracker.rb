@@ -1,5 +1,3 @@
-require 'models'
-
 module Charyb
   class SourceTracker
 
