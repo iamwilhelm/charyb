@@ -8,8 +8,16 @@
   <label for="source[url]">URL:</label><br/>
   <input type="text" name="source[url]" value="<%= @datasource.url %>" /><br/>
 
+  <label for="source[content_type]">Content Type:</label><br/>
+  <select name="source[content_type]">
+    <option value=""></option>
+    <option value="text/html" <%= @datasource.content_type == 'text/html' ? 'selected="selected"' : '' %>>text/html</option>
+    <option value="text/csv" <%= @datasource.content_type == 'text/csv' ? 'selected="selected"' : '' %>>text/csv</option>
+  </select><br/>
+
   <label for="source[description]">Description:</label><br/>
   <textarea name="source[description]"><%= @datasource.description %></textarea><br/>
+
 
   <input type="submit" value="Update" />
 </form>

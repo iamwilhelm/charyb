@@ -4,7 +4,7 @@ module Source
 
   # A datasource that is an html table that needs to be parsed using css selectors 
   # and cleaned in order to extract the data they contain
-  class Html < Datasource
+  class TextHtml < Datasource
     include Source::StringFilters
 
     # returns a filtered response body

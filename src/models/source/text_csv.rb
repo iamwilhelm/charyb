@@ -1,9 +1,11 @@
+require 'csv'
+
 module Source
 
   # A datasource that's a CSV file that needs to be parsed 
   # and cleaned in order to extract the data they contain
-  class Plain < Datasource
-    
+  class TextCsv < Datasource
+
     # returns the raw response body from the http request that downloaded 
     # the CSV file
     def response_body(reload = false)
@@ -17,11 +19,11 @@ module Source
     # if reload is true, then we load it again.  if false, we use the memoized copy
     # stored in an attribute
     def document(reload = false)
-      @doc = response_body
+      @doc = CSV.parse(response_body)
     end
 
     def display
-      @doc.split("\n")[0..9] << "Only showing the first 10 rows"
+      @doc[0..10]
     end
 
     # retrieve and extract data from the datasource and yield rows as a hash

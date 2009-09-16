@@ -5,9 +5,8 @@ end
 
 module Source
   class << self
-    # converts a content type to name of class
-    def class_name_of(content_type)
-      content_type[/(.*\/)?(.*)$/, 2].camelize
+    def sources
+      [Source::TextHtml, Source::TextCsv]
     end
   end
 end

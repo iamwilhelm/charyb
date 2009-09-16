@@ -54,7 +54,7 @@ post '/datasources' do
     response = open(params["source"]["url"])
     @datasource = returning(Source::Datasource.new) do |ds|
       ds.url = params["source"]["url"]
-      ds.type = Source.class_name_of(response.content_type)
+      ds.type = Source::Datasource.class_name_of(response.content_type)
       ds.content_type = response.content_type
     end
     @datasource.save!
@@ -80,7 +80,7 @@ end
 
 # shows a data source of specific type
 get '/datasources/:id/:type' do
-  @datasource = Source.const_get(Source.class_name_of(params["type"])).
+  @datasource = Source.const_get(Source::Datasource.class_name_of(params["type"])).
     find(params["id"], :include => ["cols"])
   @doc = @datasource.document
   
