@@ -1,4 +1,6 @@
 # This is where we initialize constants and paths
+
+old_verbose, $VERBOSE = $VERBOSE, nil
 module Charyb  
   ROOT_PATH = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
@@ -17,14 +19,20 @@ module Charyb
   DATASOURCES_PATH = File.join(DATASOURCES_ROOT, "datasources.db")
   MIGRATIONS_ROOT = File.join(DATASOURCES_ROOT, "migrations")
   SCHEMA_PATH = File.join(DATASOURCES_ROOT, "schema.rb")
-end
+
+  # The place where the sinatra web app file is
+  WEBAPP_ROOT = File.join(ROOT_PATH, "src")
+  WEBAPP_PATH = File.join(WEBAPP_ROOT, "application.rb")
+end 
+$VERBOSE = old_verbose
+
 
 # add application's source directories to lib search path
 $: << 
   File.join(Charyb::ROOT_PATH, "config") << 
   File.join(Charyb::ROOT_PATH, "lib") << 
-  File.join(Charyb::ROOT_PATH, "src") <<
-  File.join(Charyb::ROOT_PATH, "src/models")
+  Charyb::WEBAPP_ROOT <<
+  File.join(Charyb::WEBAPP_ROOT, "models")
 
 # add the core extensions to the Ruby language
 Dir.glob(File.join(Charyb::ROOT_PATH, "lib/core_ext/*.rb")).each do |core_ext_path|
