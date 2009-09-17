@@ -26,6 +26,15 @@ namespace :crawler do
   end
 end
 
+desc "run tests"
+task :test do
+  Dir.glob(File.join("test", "*_test.rb")) do |filename|
+    puts `ruby #{filename}`
+  end
+end
+namespace :test do
+end
+
 desc "database stuff"
 namespace :db do
   desc "resets the database"
