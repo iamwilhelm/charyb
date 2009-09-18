@@ -23,6 +23,10 @@ module Charyb
   # The place where the sinatra web app file is
   WEBAPP_ROOT = File.join(ROOT_PATH, "src")
   WEBAPP_PATH = File.join(WEBAPP_ROOT, "application.rb")
+
+  # The place where tests are
+  TEST_ROOT = File.join(ROOT_PATH, "test")
+  MOCKS_ROOT = File.join(TEST_ROOT, "mocks")
 end 
 $VERBOSE = old_verbose
 

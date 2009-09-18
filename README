@@ -20,14 +20,22 @@ if you haven't added the github source, do it by doing:
 
 Then install the following gems:
 
-  sudo gem install -d sinatra -v "0.9.4"
-  sudo gem install -d couchrest -v "0.33"
-  sudo gem install -d hpricot -v "0.8.1"
-  sudo gem install -d cucumber -v "0.3.100"
-  sudo gem install -d notahat-machinist -v "1.0.3"
-  sudo gem install -d faker -v "0.3.1"
-  sudo gem install -d webrat -v "0.5.3"
-  sudo gem isntall -d rack-test -v "0.4.2"
+  # for web application
+  sudo gem install -d sinatra -v 0.9.4
+  sudo gem install -d hpricot -v 0.8.1
+  sudo gem install -d couchrest -v 0.33
+
+  # for testing (yet undecided if want to use cucumber)
+  sudo gem install -d cucumber -v 0.3.100
+  sudo gem isntall -d rack-test -v 0.4.2
+  sudo gem install -d webrat -v 0.5.3
+
+  # for mocks and stubs
+  sudo gem install -d mocha -v 0.9.8
+
+  # for fixtures
+  sudo gem install -d notahat-machinist -v 1.0.3
+  sudo gem install -d faker -v 0.3.1
 
 h2. Setup
 

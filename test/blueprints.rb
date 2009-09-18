@@ -8,26 +8,29 @@ Sham.define do
   description { Faker::Lorem.paragraph }
 end
 
-Source::Datasource.blueprint do
+Source::TextHtml.blueprint do
   url { Sham.datasource_url }
   title { Sham.title }
   description { Sham.description }
-end
 
-Source::TextHtml.blueprint do
-  url { Sham.datasource_url }
   type { "TextHtml" }
   content_type { "text/html" }
 end
 
 Source::TextCsv.blueprint do
   url { Sham.datasource_url }
+  title { Sham.title }
+  description { Sham.description }
+
   type { "TextCsv" }
   content_type { "text/html" }
 end
 
 Source::TextPlain.blueprint do
   url { Sham.datasource_url }
+  title { Sham.title }
+  description { Sham.description }
+
   type { "TextPlain" }
   content_type { "text/plain" }
 end

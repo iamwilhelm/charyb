@@ -1,19 +1,23 @@
 require File.dirname(__FILE__) + "/test_helper"
 
 # Feature:
-#   As an anonymous user
+#   As a data harvester user
 #   I want to CRUD datasources
 #   So I can manage datasources
 #   So I can import datasources of different kinds
 class DatasourceTest < Test::Unit::TestCase
   include Rack::Test::Methods
 
+  def setup
+    @html_mock_path = File.join(Charyb::MOCKS_ROOT, "infoplease.html")
+  end
+
   def app
     Sinatra::Application
   end
 
   # Scenario:
-  # Given an anonymous user
+  # Given a data harvester user
   # When I visit the datasources index
   # Then I see the list of datasources
   def test_should_see_list_of_datasources
@@ -22,7 +26,7 @@ class DatasourceTest < Test::Unit::TestCase
   end
 
   # Scenario Outline:
-  # Given an anonymous user
+  # Given a data harvester user
   # When I add a <content_type> datasource
   # Then a datasource is added
   # And the datasource has the correct content type
@@ -32,14 +36,33 @@ class DatasourceTest < Test::Unit::TestCase
 #     end
 #   end
 
-  # Given an anonymous user
+  # Given a data harvester user
   # And a datasource
   # When I visit a datasource
   # Then I see datasource
   def test_should_show_datasource
-    @datasource = Source::TextHtml.make
-    # get "/datasources/#{@datasource.id}/text_html"
+    # create the datasource fixture
+    # stub the datasource fixture and fix finder t return this mock object
+    @datasource = returning(Source::TextHtml.make) do |ds|
+      ds.stubs(:response_body).
+        returns(File.open(@html_mock_path) { |f| f.read })
+    end
+    Source::TextHtml.expects(:find).with(@datasource.id.to_s, anything).
+      returns(@datasource)
+
+    get "/datasources/#{@datasource.id}/text_html"
+
     assert :success
+  end
+
+  # Given a data harvester user
+  # And a datasource
+  # When I update a datasource content_type
+  # Then the datasource's content_type should update 
+  # And the datasource's type should update
+  # And redirect to new datasource type
+  def test_should_update_datasource_content_type
+    @datasource = Source::TextHtml.make
   end
 
 end
