@@ -38,7 +38,11 @@ end
 desc "database stuff"
 namespace :db do
   desc "resets the database"
-  task :reset do
+  task :reset, :confirm do |t, args|
+    if args.confirm.nil?
+      puts("need to run 'rake db:reset[true]' to reset")
+      return 
+    end
     puts "Deleting the database"
     `rm -rf #{Charyb::DATASOURCES_PATH}`
   end
