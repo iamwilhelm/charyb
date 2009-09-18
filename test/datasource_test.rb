@@ -16,13 +16,32 @@ class DatasourceTest < Test::Unit::TestCase
     Sinatra::Application
   end
 
-  # Scenario:
-  # Given a data harvester user
-  # When I visit the datasources index
-  # Then I see the list of datasources
-  def test_should_see_list_of_datasources
-    get "/datasources"
-    assert :success
+  context "given a data harvester user" do
+
+    context "ghen visit datasource index" do
+      setup { get "/datasources" }
+      
+      should "see list of datasources" do
+        assert :success
+      end
+    end
+
+    context "and given a TextHtml datasource" do
+      setup do     
+        @datasource = returning(Source::TextHtml.make) do |ds|
+          ds.stubs(:response_body).returns(File.open(@html_mock_path) { |f| f.read })
+        end
+        Source::TextHtml.expects(:find).with(@datasource.id.to_s, anything).returns(@datasource)
+      end
+
+      context "when visit a TextHtml datasource" do
+        setup { get "/datasources/#{@datasource.id}/text_html" }
+        should "see the datasource details" do
+          assert :success
+        end
+      end
+
+    end
   end
 
   # Scenario Outline:
@@ -36,24 +55,6 @@ class DatasourceTest < Test::Unit::TestCase
 #     end
 #   end
 
-  # Given a data harvester user
-  # And a datasource
-  # When I visit a datasource
-  # Then I see datasource
-  def test_should_show_datasource
-    # create the datasource fixture
-    # stub the datasource fixture and fix finder t return this mock object
-    @datasource = returning(Source::TextHtml.make) do |ds|
-      ds.stubs(:response_body).
-        returns(File.open(@html_mock_path) { |f| f.read })
-    end
-    Source::TextHtml.expects(:find).with(@datasource.id.to_s, anything).
-      returns(@datasource)
-
-    get "/datasources/#{@datasource.id}/text_html"
-
-    assert :success
-  end
 
   # Given a data harvester user
   # And a datasource

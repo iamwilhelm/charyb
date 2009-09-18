@@ -8,6 +8,7 @@ require Charyb::WEBAPP_PATH
 require "test/unit"
 require "rack/test"
 require "webrat"
+require "shoulda"
 
 # require mocks, stubs, and blueprints
 require "mocha"
