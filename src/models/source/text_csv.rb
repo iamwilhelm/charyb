@@ -20,10 +20,12 @@ module Source
     # stored in an attribute
     def document(reload = false)
       @doc = CSV.parse(response_body)
+    rescue CSV::IllegalFormatError => err
+      @doc = "Not a legal CSV file"
     end
 
     def display
-      @doc[0..10]
+      @doc[0..100]
     end
 
     # retrieve and extract data from the datasource and yield rows as a hash

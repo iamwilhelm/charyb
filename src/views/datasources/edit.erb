@@ -10,7 +10,7 @@
 
   <label for="source[content_type]">Content Type:</label><br/>
   <select name="source[content_type]">
-    <option value=""></option>
+    <option value="text/plain" <%= @datasource.content_type == 'text/plain ? 'selected="selected"' : '' %>>text/plain</option>
     <option value="text/html" <%= @datasource.content_type == 'text/html' ? 'selected="selected"' : '' %>>text/html</option>
     <option value="text/csv" <%= @datasource.content_type == 'text/csv' ? 'selected="selected"' : '' %>>text/csv</option>
   </select><br/>

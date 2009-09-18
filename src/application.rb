@@ -74,11 +74,14 @@ put '/datasources/:id' do
   @datasource = Source::Datasource.find(params["id"])
   @datasource.update_attributes!(params["source"])
 
-  redirect back
+  redirect "/datasources/#{@datasource.id}/#{@datasource.url_type}"
   # erb :"/datasources/_source", :layout => false
 end
 
 # shows a data source of specific type
+#--
+# we put it down here below /datasources/:id/edit, so that "edit" doesn't get 
+# overshadowed by this route
 get '/datasources/:id/:type' do
   @datasource = Source.const_get(Source::Datasource.class_name_of(params["type"])).
     find(params["id"], :include => ["cols"])

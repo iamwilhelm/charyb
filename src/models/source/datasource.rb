@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'openssl'
+require 'net/http'
 
 require 'core_ext/enumerable'
 
@@ -30,6 +31,12 @@ module Source
       def content_type
         self.name[/::(.*)$/, 1].underscore.gsub(/_/, '/')
       end
+    end
+
+    # Changes the type of class in DB when the content type changes
+    def content_type=(new_content_type)
+      write_attribute(:content_type, new_content_type)
+      write_attribute(:type, self.class.class_name_of(new_content_type))
     end
 
     # returns the title of the datasource, and if uninitialized,
