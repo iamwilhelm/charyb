@@ -15,8 +15,8 @@ h2. Installation
 
 if you haven't added the github source, do it by doing:
 
-  sudo gem source http://gems.github.com
-  sudo gem source http://gems.rubyforge.org
+  sudo gem source -a http://gems.github.com
+  sudo gem source -a http://gems.rubyforge.org
 
 Then install the following gems:
 
@@ -26,7 +26,7 @@ Then install the following gems:
   sudo gem install -d couchrest -v 0.33
 
   # for testing
-  sudo gem isntall -d rack-test -v 0.4.2
+  sudo gem install -d rack-test -v 0.4.2
   sudo gem install -d webrat -v 0.5.3
   sudo gem install -d thoughtbot-shoulda -v 2.10.2
 
