@@ -43,7 +43,15 @@ Then install the following gems:
 
 h2. Setup
 
-You must set up the database first.
+You need to pull in the git submodules first
+
+  git submodule init
+  git submodule update
+
+If it tells you that you can access it, ping the owner of the repo to add you as 
+a collaborator
+
+Then you must set up the database.
 
   rake db:schema:load
 
