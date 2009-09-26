@@ -18,6 +18,10 @@ if you haven't added the github source, do it by doing:
   sudo gem source http://gems.github.com
   sudo gem source http://gems.rubyforge.org
 
+The install the following packages:
+
+  libopenssl-ruby
+
 Then install the following gems:
 
   # for web application
