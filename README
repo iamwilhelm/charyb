@@ -18,6 +18,10 @@ if you haven't added the github source, do it by doing:
   sudo gem source -a http://gems.github.com
   sudo gem source -a http://gems.rubyforge.org
 
+The install the following packages:
+
+  libopenssl-ruby
+
 Then install the following gems:
 
   # for web application
@@ -39,7 +43,15 @@ Then install the following gems:
 
 h2. Setup
 
-You must set up the database first.
+You need to pull in the git submodules first
+
+  git submodule init
+  git submodule update
+
+If it tells you that you can access it, ping the owner of the repo to add you as 
+a collaborator
+
+Then you must set up the database.
 
   rake db:schema:load
 
