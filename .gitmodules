@@ -4,3 +4,6 @@
 [submodule "public/css/css_commons"]
 	path = public/css/css_commons
 	url = git@github.com:iamwilhelm/css_commons.git
+[submodule "public/js/french_maid"]
+	path = public/js/french_maid
+	url = git@github.com:iamwilhelm/french_maid.git
