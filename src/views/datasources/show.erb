@@ -17,9 +17,9 @@
           <li id="column_<%= col.id %>_info">
             <!-- This should be a partial -->
             <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
-            <a href="#" rel="rest_get"
-               data-action="/datasources/<%= @datasource.id %>/cols/<%= col.id %>/edit" 
-               data-target="#column_<%= col.id %>_info">Edit</a>
+            <a href="/datasources/<%= @datasource.id %>/cols/<%= col.id %>/edit"
+               data-remote="true"  
+               data-update="column_<%= col.id %>_info">Edit</a>
           </li>
         <% end.empty? %>
           <li>There are currently no columns</li>
@@ -27,9 +27,9 @@
       </ul>
       <div id="column_new">
       </div>
-      <a href="#" rel="rest_get" 
-         data-action="/datasources/<%= @datasource.id %>/cols/new" 
-         data-target="#column_new">
+      <a href="/datasources/<%= @datasource.id %>/cols/new"
+         data-remote="true" 
+         data-update="column_new">
         Add a column
       </a>
     </div>

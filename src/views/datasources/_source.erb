@@ -1,10 +1,9 @@
 <div id="datasource_info">
   <h1><%= @datasource.title %> 
     <span>
-      <a href="#"
-         rel="rest_get"
-         data-action="/datasources/<%= @datasource.id %>/edit" 
-         data-target="#datasource_info">Edit</a>
+      <a href="/datasources/<%= @datasource.id %>/edit" 
+         data-remote="true" 
+         data-update="datasource_info">Edit</a>
     </span>
   </h1>
 
