@@ -1,0 +1,1 @@
+../../vendor/french_maid/french_maid.js

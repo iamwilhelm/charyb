@@ -1,6 +1,9 @@
 [submodule "vendor/facebooker"]
 	path = vendor/facebooker
 	url = git://github.com/mmangino/facebooker.git
-[submodule "public/css_commons"]
-	path = public/css_commons
+[submodule "public/css/css_commons"]
+	path = public/css/css_commons
 	url = git@github.com:iamwilhelm/css_commons.git
+[submodule "vendor/french_maid"]
+	path = vendor/french_maid
+	url = git@github.com:iamwilhelm/french_maid.git
