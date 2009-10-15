@@ -1,0 +1,14 @@
+html, body {
+    background-color: #a3a3a3;
+    text-align: left;
+}
+
+.splash {
+    background-image: url('/site-media/images/splash.png');
+    background-position: left;
+}
+
+.frame {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
