@@ -1,0 +1,10 @@
+table.data td:hover, table.data th:hover { background: yellow }
+th.selected { background: #ee9999 }
+td.selected { background: #ee9999 }
+
+table.data
+{
+    border-collapse: collapse;
+    border: 2px solid black;
+}
+table.data th, table.data td { border: 1px solid black; }
