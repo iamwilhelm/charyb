@@ -1,7 +1,6 @@
 require 'core_ext/string'
 
 require 'source_tracker'
-require 'couch_store'
 
 module Charyb
   # The background process that crawls 
@@ -20,7 +19,7 @@ module Charyb
       end
 
       def crawl
-        CouchStore.open(@dataware_name) do |@db|
+        # open up Redis through Tyra
           @tracker.datasources.each do |ds|
             next if !ds.stale?
             puts "Crawling #{ds.uri}"
@@ -31,7 +30,7 @@ module Charyb
               @db.save_doc(document)
             end
           end
-        end
+
       end
 
     end
