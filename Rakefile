@@ -21,7 +21,7 @@ namespace :crawler do
   desc "runs Charyb crawler to suck down data"
   task :run => :environment do
     puts "Running Charyb crawler..."
-    load 'script/run_crawler.rb'
+    Charyb::Crawler.start
   end
 end
 
