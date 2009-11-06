@@ -1,4 +1,3 @@
-require 'config/initialize'
 
 require 'rake'
 require 'rake/testtask'
@@ -6,13 +5,13 @@ require 'rake/rdoctask'
 
 desc "loads the right environment"
 task :environment do
-  # nothing here yet.
-  # suppose to do what config/initialize does"
+  require 'config/initialize'
+  require 'src/crawler'
 end
 
 namespace :web do
   desc "runs the web interface to help screen scrape"
-  task :run do
+  task :run => :environment do
     puts "Running Charyb interface..."
     `ruby src/application.rb`
   end
@@ -20,9 +19,9 @@ end
 
 namespace :crawler do
   desc "runs Charyb crawler to suck down data"
-  task :run do
+  task :run => :environment do
     puts "Running Charyb crawler..."
-    load 'script/run_crawler.rb'
+    Charyb::Crawler.start
   end
 end
 
