@@ -67,6 +67,11 @@ module Source
       raise Datasource::MethodOverride.new("document method needs to be overridden")
     end
 
+    # returns the document for display
+    def display
+      raise Datasource::MethodOverride.new("display method needs to be overridden")
+    end
+
     # extracts the data from the remote datasource
     def crawl
       raise Datasource::MethodOverride.new("crawl method needs to be overridden")
