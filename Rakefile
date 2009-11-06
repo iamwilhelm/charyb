@@ -1,3 +1,4 @@
+require 'config/initialize'
 
 require 'rake'
 require 'rake/testtask'
@@ -26,7 +27,7 @@ namespace :crawler do
 end
 
 desc "run tests"
-task :test do
+task :test => :environment do
   Dir.glob(File.join("test", "*_test.rb")) do |filename|
     puts `ruby #{filename}`
   end
