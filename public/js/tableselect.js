@@ -7,6 +7,23 @@ $(document).ready(function()
     $("#remote_page table").mousedown(click);
 });
 
+function setButton(textAreaName)
+{
+    if (one==null || two==null)
+    {
+	alert("Select region first");
+	return;
+    }
+
+    var value = $.map($("th.selected,td.selected"), function(nn,ii){ return trim(nn.innerHTML); });
+    $("#table_new textarea[name="+textAreaName+"]").html(value.join("\n"));
+}
+
+function trim(str)
+{
+    return str.replace(/^\s+|\s+$/g,"");
+}
+
 function clear(event)
 {
     one = undefined;

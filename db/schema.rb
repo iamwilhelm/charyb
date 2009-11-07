@@ -9,30 +9,39 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090913111640) do
+ActiveRecord::Schema.define(:version => 20091105205200) do
 
-  create_table "cols", :force => true do |t|
-    t.integer  "datasource_id",                                    :null => false
-    t.string   "title",            :limit => 100,                  :null => false
-    t.string   "data_type",                                        :null => false
-    t.string   "units",                                            :null => false
-    t.string   "multiplier",       :limit => 10,  :default => "1"
-    t.string   "heading_selector",                                 :null => false
-    t.string   "column_selector",                                  :null => false
-    t.string   "converter"
-    t.text     "notes"
+  create_table "datasources", :force => true do |t|
+    t.string   "title",           :limit => 100,  :default => "Untitled Datasource"
+    t.string   "url",             :limit => 2048,                                    :null => false
+    t.string   "content_type",                    :default => "text/html",           :null => false
+    t.datetime "last_crawled_at"
+    t.datetime "last_changed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "datasources", :force => true do |t|
-    t.string   "url",             :limit => 2048,                                    :null => false
-    t.string   "title",           :limit => 100,  :default => "Untitled Datasource"
-    t.string   "type",            :limit => 20,                                      :null => false
-    t.string   "content_type",                    :default => "text/html",           :null => false
-    t.string   "description"
-    t.datetime "last_crawled_at"
-    t.datetime "last_changed_at"
+  create_table "imported_tables", :force => true do |t|
+    t.integer  "datasource_id",                                      :null => false
+    t.string   "table_heading",      :limit => 100,                  :null => false
+    t.string   "col_heading",        :limit => 100,                  :null => false
+    t.string   "row_heading",        :limit => 100,                  :null => false
+    t.string   "descr"
+    t.datetime "published_at"
+    t.text     "notes"
+    t.string   "is_numeric",         :limit => 1,   :default => "1", :null => false
+    t.string   "units",                                              :null => false
+    t.string   "multiplier",                        :default => "1"
+    t.string   "converter"
+    t.string   "col_labels_one",     :limit => 100,                  :null => false
+    t.string   "col_labels_two",     :limit => 100,                  :null => false
+    t.string   "col_labels_content",                                 :null => false
+    t.string   "row_labels_one",     :limit => 100,                  :null => false
+    t.string   "row_labels_two",     :limit => 100,                  :null => false
+    t.string   "row_labels_content",                                 :null => false
+    t.string   "data_one",           :limit => 100,                  :null => false
+    t.string   "data_two",           :limit => 100,                  :null => false
+    t.string   "data_content",                                       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

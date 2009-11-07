@@ -1,7 +1,0 @@
-<% %w(title data_type units multiplier heading_selector column_selector converter).each do |col_name| %>
-  <label for="col[<%= col_name %>]"><%= col_name.gsub(/_/, " ").capitalize %>:</label><br/>
-  <input type="text" name="col[<%= col_name %>]" 
-         value="<%= @col.send(col_name) %>" /><br/>
-<% end %>
-<label for="col[notes]">Notes:</label><br/>
-<textarea name="col[notes]"><%= @col.notes %></textarea><br/>

@@ -13,24 +13,24 @@
 
     <div id="col_info" class="half">
       <ul id="column_list">
-        <% if @datasource.cols.each do |col| %>
-          <li id="column_<%= col.id %>_info">
+        <% if @datasource.imported_tables.each do |tbl| %>
+          <li id="column_<%= tbl.id %>_info">
             <!-- This should be a partial -->
-            <%= col.data_type %>::<%= col.title %> (<%= col.units %>) | 
-            <a href="/datasources/<%= @datasource.id %>/cols/<%= col.id %>/edit"
+            <%= tbl.is_numeric %>::<%= tbl.table_heading %> (<%= tbl.units %>) | 
+            <a href="/datasources/<%= @datasource.id %>/imported_tables/<%= tbl.id %>/edit"
                data-remote="true"  
-               data-update="column_<%= col.id %>_info">Edit</a>
+               data-update="column_<%= tbl.id %>_info">Edit</a>
           </li>
         <% end.empty? %>
-          <li>There are currently no columns</li>
+          <li>There are currently no tables</li>
         <% end %>
       </ul>
-      <div id="column_new">
+      <div id="table_new">
       </div>
-      <a href="/datasources/<%= @datasource.id %>/cols/new"
+      <a href="/datasources/<%= @datasource.id %>/imported_tables/new"
          data-remote="true" 
-         data-update="column_new">
-        Add a column
+         data-update="table_new">
+        Add a table
       </a>
     </div>
   </div>

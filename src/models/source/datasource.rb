@@ -13,10 +13,9 @@ module Source
 
   # The base class for different datasources
   class Datasource < ActiveRecord::Base
-    has_many :cols, :dependent => :destroy
+    has_many :imported_tables, :dependent => :destroy
 
     validates_presence_of :url, :message => "can't be blank"
-    validates_presence_of :type, :message => "can't be blank"
     validates_presence_of :content_type, :message => "can't be blank"
 
     class << self
@@ -36,7 +35,6 @@ module Source
     # Changes the type of class in DB when the content type changes
     def content_type=(new_content_type)
       write_attribute(:content_type, new_content_type)
-      write_attribute(:type, self.class.class_name_of(new_content_type))
     end
 
     # returns the title of the datasource, and if uninitialized,
@@ -47,7 +45,7 @@ module Source
 
     # helper function to make it easy to construct urls based on datasource type
     def url_type
-      attributes["type"].underscore.downcase
+      content_type.gsub("/", "_")
     end
 
     # shows the raw response body text of the datasource

@@ -15,29 +15,29 @@ module Source
     # encapulates a response body in an Hpricot object so it can be 
     # traversed
     def document(reload = false)
-      @doc = Hpricot(response_body(reload))
+      response_body(reload)
     end
     
     # displays datasource for human intervention of data extraction
     def display
-      (@doc/"body").inner_html
+      @body
     end
     
     # retrieve and extract data from the datasource
     def crawl
-      cols.map do |col|
+      #cols.map do |col|
         # let's grab each column and the data for that column
-        heading = (document/col.heading_selector).inner_html
-        data = (document/col.column_selector).map { |row| row.inner_html }
-        [heading, data]
-      end.transpose.tap do |dm|
+      #  heading = (document/col.heading_selector).inner_html
+      #  data = (document/col.column_selector).map { |row| row.inner_html }
+      #  [heading, data]
+      #end.transpose.tap do |dm|
         # let's transpose the matrix and grab the headers
-        @headers = dm.slice(0)
-      end.slice(1..-1).each do |row|
+      #  @headers = dm.slice(0)
+      #end.slice(1..-1).each do |row|
         # and the we take all the data and we yield each row as
         # a hash of headers matched with their column value for this row
-        yield Hash[*@headers.zip(row)]
-      end
+      #  yield Hash[*@headers.zip(row)]
+      #end
     end
   end
 

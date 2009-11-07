@@ -6,8 +6,9 @@ require 'rake/rdoctask'
 
 desc "loads the right environment"
 task :environment do
-  require 'config/initialize'
-  require 'src/crawler'
+  # comment these out to migrate
+  #require 'config/initialize'
+  #require 'src/crawler'
 end
 
 namespace :web do

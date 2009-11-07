@@ -1,6 +1,6 @@
 <form method="post" class="previewable" 
-      action="/datasources/<%= @datasource.id  %>/cols">
-  <%= erb :"cols/_form", :layout => false %>
+      action="/datasources/<%= @datasource.id  %>/imported_tables">
+  <%= erb :"imported_tables/_form", :layout => false %>
   <input type="button" class="preview" value="Preview" />
   <input type="submit" value="Create" />
 </form>

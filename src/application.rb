@@ -40,7 +40,7 @@ end
 
 # shows a data source
 get '/datasources/:id' do
-  @datasource = Source::Datasource.find(params["id"], :include => ["cols"])
+  @datasource = Source::Datasource.find(params["id"], :include => ["imported_tables"])
   @doc = @datasource.document
 
   erb :"/datasources/show"
@@ -54,12 +54,10 @@ post '/datasources' do
     response = open(params["source"]["url"])
     @datasource = returning(Source::Datasource.new) do |ds|
       ds.url = params["source"]["url"]
-      ds.type = Source::Datasource.class_name_of(response.content_type)
       ds.content_type = response.content_type
     end
     @datasource.save!
   end
-
   redirect "/datasources/#{@datasource.id}/#{@datasource.url_type}"
 end
 
@@ -84,7 +82,7 @@ end
 # overshadowed by this route
 get '/datasources/:id/:type' do
   @datasource = Source.const_get(Source::Datasource.class_name_of(params["type"])).
-    find(params["id"], :include => ["cols"])
+    find(params["id"], :include => ["imported_tables"])
   @doc = @datasource.document
   
   erb :"/datasources/show"
@@ -98,35 +96,35 @@ delete '/datasources/:id' do
   redirect back
 end
 
-########## Column routes ##########
+########## Table routes ##########
 
 # new column ajax
-get '/datasources/:source_id/cols/new' do
+get '/datasources/:source_id/imported_tables/new' do
   @datasource = Source::Datasource.find(params["source_id"])
-  @col = @datasource.cols.new
-  erb :"/cols/new", :layout => false 
+  @imported_table = @datasource.imported_tables.new
+  erb :"/imported_tables/new", :layout => false 
 end
 
 # create column ajax
-post '/datasources/:source_id/cols' do
+post '/datasources/:source_id/imported_tables' do
   @datasource = Source::Datasource.find(params["source_id"])
-  @col = @datasource.cols.create!(params["col"])
+  @imported_table = @datasource.imported_tables.create!(params["imported_table"])
 
   redirect back
 end
 
 # edit column ajax
-get '/datasources/:source_id/cols/:id/edit' do
+get '/datasources/:source_id/imported_tables/:id/edit' do
   @datasource = Source::Datasource.find(params["source_id"])
-  @col = @datasource.cols.find(params["id"])
-  erb :"/cols/edit", :layout => false
+  @imported_table = @datasource.imported_tables.find(params["id"])
+  erb :"/imported_tables/edit", :layout => false
 end
 
 # update column 
-put '/datasources/:source_id/cols/:id' do
+put '/datasources/:source_id/imported_tables/:id' do
   @datasource = Source::Datasource.find(params["source_id"])
-  @col = @datasource.cols.find(params["id"])
-  @col.update_attributes(params["col"])
+  @imported_table = @datasource.imported_tables.find(params["id"])
+  @imported_table.update_attributes(params["imported_table"])
   
   redirect back
 end

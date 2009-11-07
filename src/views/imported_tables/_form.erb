@@ -1,0 +1,25 @@
+<% %w(table_heading col_heading row_heading published_at is_numeric units multiplier converter).each do |field| %>
+  <label for="imported_table[<%= field %>]"><%= field.gsub(/_/, " ").capitalize %>:</label><br/>
+  <input type="text" name="imported_table[<%= field %>]" 
+         value="<%= @imported_table.send(field) %>" /><br/>
+<% end %>
+<% %w(col_labels row_labels data).each do |field| %>
+
+   <% field_one = field+"_one" %>
+   <% field_two = field+"_two" %>
+   <% field_content = field+"_content" %>
+
+  <input type="button" name="button" value="set" onclick="setButton('imported_table[<%= field_content %>]')" />
+  <label for="imported_table[<%= field %>]"><%= field.gsub(/_/, " ").capitalize %>:</label>
+  <br/>
+
+  <textarea name="imported_table[<%= field_content %>]"></textarea>
+  <input type="hidden" name="imported_table[<%= field_one %>]"
+         value="<%= @imported_table.send(field_one) %>" />
+  <input type="hidden" name="imported_table[<%= field_two %>]"
+         value="<%= @imported_table.send(field_two) %>" />
+  <br/>
+
+<% end %>
+<label for="imported_table[notes]">Notes:</label><br/>
+<textarea name="imported_table[notes]"><%= @imported_table.notes %></textarea><br/>

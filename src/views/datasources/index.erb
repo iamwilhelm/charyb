@@ -10,14 +10,14 @@
   <h1>Data Sources</h1>
   <p>
     <table style="width: 80%">
-      <tr><td>Title</td><td>Type</td><td>Columns</td><td>Action</td></tr>
+      <tr><td>Title</td><td>Type</td><td>Tables</td><td>Action</td></tr>
       <% if @datasources.each do |s| %>
         <tr><td>
-            <a href="/datasources/<%= s.id %>/<%= s.url_type %>"><%= s.title %></a> 
+            <a href="/datasources/<%= s.id %>/<%= s.url_type %>"><%= s.url %></a> 
           </td><td>
             <%= s.content_type %>
           </td><td>
-            <%= s.cols.count %>
+	    <%= s.imported_tables.count %>
           </td><td>
             <form method="post" action="/datasources/<%= s.id %>">
               <input type="hidden"name="_method" value="delete" />
