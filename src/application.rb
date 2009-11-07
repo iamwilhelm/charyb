@@ -98,14 +98,14 @@ end
 
 ########## Table routes ##########
 
-# new column ajax
+# new table ajax
 get '/datasources/:source_id/imported_tables/new' do
   @datasource = Source::Datasource.find(params["source_id"])
   @imported_table = @datasource.imported_tables.new
   erb :"/imported_tables/new", :layout => false 
 end
 
-# create column ajax
+# create table ajax
 post '/datasources/:source_id/imported_tables' do
   @datasource = Source::Datasource.find(params["source_id"])
   @imported_table = @datasource.imported_tables.create!(params["imported_table"])
@@ -113,14 +113,14 @@ post '/datasources/:source_id/imported_tables' do
   redirect back
 end
 
-# edit column ajax
+# edit table ajax
 get '/datasources/:source_id/imported_tables/:id/edit' do
   @datasource = Source::Datasource.find(params["source_id"])
   @imported_table = @datasource.imported_tables.find(params["id"])
   erb :"/imported_tables/edit", :layout => false
 end
 
-# update column 
+# update table
 put '/datasources/:source_id/imported_tables/:id' do
   @datasource = Source::Datasource.find(params["source_id"])
   @imported_table = @datasource.imported_tables.find(params["id"])

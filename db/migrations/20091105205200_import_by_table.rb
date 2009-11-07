@@ -30,6 +30,8 @@ class ImportByTable < ActiveRecord::Migration
       t.string :col_heading, :limit => 100, :null => false
       # the heading that describes all rows
       t.string :row_heading, :limit => 100, :null => false
+      # other dimensions, csv of name value pairs
+      t.string :other_dims
       # A short description to help us remember what data's here
       t.string :descr, :limit => 255
       # the date this data was published
@@ -65,8 +67,6 @@ class ImportByTable < ActiveRecord::Migration
       t.string :data_one, :limit => 100, :null => false
       # XPATH to the other corner of the data
       t.string :data_two, :limit => 100, :null => false
-      # csv text of data
-      t.string :data_content, :null => false
 
       # timestamps for this db record
       t.timestamps

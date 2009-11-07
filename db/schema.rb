@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20091105205200) do
     t.string   "table_heading",      :limit => 100,                  :null => false
     t.string   "col_heading",        :limit => 100,                  :null => false
     t.string   "row_heading",        :limit => 100,                  :null => false
+    t.string   "other_dims"
     t.string   "descr"
     t.datetime "published_at"
     t.text     "notes"
@@ -41,7 +42,6 @@ ActiveRecord::Schema.define(:version => 20091105205200) do
     t.string   "row_labels_content",                                 :null => false
     t.string   "data_one",           :limit => 100,                  :null => false
     t.string   "data_two",           :limit => 100,                  :null => false
-    t.string   "data_content",                                       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
