@@ -15,20 +15,29 @@ function setButton(fieldName)
 	return;
     }
 
-    var value = $.map($("th.selected,td.selected"), function(nn,ii){ return trim(nn.innerHTML); });
+    var cells = $("th.selected,td.selected");
+    var value = $.map(cells, function(nn,ii){ return trim(nn.innerHTML); });
+    cells.addClass(fieldName);
+    cells.removeClass("selected");
 
     if (fieldName=="data")
-    {
 	$("#table_info textarea[name=data_content]").html(value.join("\n"));
-	$("#table_info input[name=imported_table[data_one]]").val(getXPath(one));
-	$("#table_info input[name=imported_table[data_two]]").val(getXPath(two));
-    }
     else
-    {
 	$("#table_info textarea[name=imported_table["+fieldName+"_content]]").html(value.join("\n"));
-	$("#table_info input[name=imported_table["+fieldName+"_one]]").val(getXPath(one));
-	$("#table_info input[name=imported_table["+fieldName+"_two]]").val(getXPath(two));
-    }
+
+    $("#table_info input[name=imported_table[data_one]]").val(getXPath(one));
+    $("#table_info input[name=imported_table[data_two]]").val(getXPath(two));
+}
+
+function setColoring(xPathOne, xPathTwo)
+{
+    var result = document.evaluate(xPathOne, document, null, XPathResult.ANY_TYPE, null);
+    one = result.iterateNext();
+
+    result = document.evaluate(xPathTwo, document, null, XPathResult.ANY_TYPE, null);
+    two = result.iterateNext();
+
+    update();
 }
 
 function trim(str)
@@ -126,21 +135,6 @@ function boxIntersects(box1, box2)
 	&& box1.right >= box2.left 
 	&& box1.top <= box2.bottom
 	&& box1.bottom >= box2.top;
-}
-
-function setCols()
-{
-    $("input[@name=colsField]").attr("value", $.map($("th.selected,td.selected"), function(nn,ii){ return nn.innerHTML; }));
-}
-
-function setRows()
-{
-    $("input[@name=rowsField]").attr("value", $.map($("th.selected,td.selected"), function(nn,ii){ return nn.innerHTML; }));
-}
-
-function setData()
-{
-    $("input[@name=dataField]").attr("value", $.map($("th.selected,td.selected"), function(nn,ii){ return nn.innerHTML; }));
 }
 
 // counts table rows and column, taking into account col and rowspans
