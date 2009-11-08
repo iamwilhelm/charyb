@@ -7,7 +7,7 @@ $(document).ready(function()
     $("#remote_page table").mousedown(click);
 });
 
-function setButton(textAreaName)
+function setButton(fieldName)
 {
     if (one==null || two==null)
     {
@@ -16,7 +16,19 @@ function setButton(textAreaName)
     }
 
     var value = $.map($("th.selected,td.selected"), function(nn,ii){ return trim(nn.innerHTML); });
-    $("#table_new textarea[name="+textAreaName+"]").html(value.join("\n"));
+
+    if (fieldName=="data")
+    {
+	$("#table_info textarea[name=data_content]").html(value.join("\n"));
+	$("#table_info input[name=imported_table[data_one]]").val(getXPath(one));
+	$("#table_info input[name=imported_table[data_two]]").val(getXPath(two));
+    }
+    else
+    {
+	$("#table_info textarea[name=imported_table["+fieldName+"_content]]").html(value.join("\n"));
+	$("#table_info input[name=imported_table["+fieldName+"_one]]").val(getXPath(one));
+	$("#table_info input[name=imported_table["+fieldName+"_two]]").val(getXPath(two));
+    }
 }
 
 function trim(str)

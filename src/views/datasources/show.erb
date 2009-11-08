@@ -11,15 +11,15 @@
       <%= @datasource.display %>
     </div>
 
-    <div id="col_info" class="half">
-      <ul id="column_list">
+    <div id="table_info" class="half">
+      <ul id="table_list">
         <% if @datasource.imported_tables.each do |tbl| %>
-          <li id="column_<%= tbl.id %>_info">
+          <li id="table_<%= tbl.id %>_info">
             <!-- This should be a partial -->
             <%= tbl.is_numeric %>::<%= tbl.table_heading %> (<%= tbl.units %>) | 
             <a href="/datasources/<%= @datasource.id %>/imported_tables/<%= tbl.id %>/edit"
                data-remote="true"  
-               data-update="column_<%= tbl.id %>_info">Edit</a>
+               data-update="table_<%= tbl.id %>_info">Edit</a>
           </li>
         <% end.empty? %>
           <li>There are currently no tables</li>

@@ -9,7 +9,7 @@
    <% field_two = field+"_two" %>
    <% field_content = field+"_content" %>
 
-  <input type="button" name="button" value="set" onclick="setButton('imported_table[<%= field_content %>]')" />
+  <input type="button" name="button" value="set" onclick="setButton('<%= field %>')" />
   <label for="imported_table[<%= field %>]"><%= field.gsub(/_/, " ").capitalize %>:</label>
   <br/>
 
@@ -22,8 +22,8 @@
 
 <% end %>
 
-<input type="button" name="button" value="set" onclick="setButton('data_content')" />
-<label for="imported_table[data]">data:</label>
+<input type="button" name="button" value="set" onclick="setButton('data')" />
+<label for="imported_table[data]">Data:</label>
 <br/>
 
 <textarea name="data_content"></textarea>
