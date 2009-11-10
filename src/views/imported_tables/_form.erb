@@ -13,7 +13,7 @@
   <label for="imported_table[<%= field %>]"><%= field.gsub(/_/, " ").capitalize %>:</label>
   <br/>
 
-  <textarea name="imported_table[<%= field_content %>]"></textarea>
+  <textarea name="imported_table[<%= field_content %>]"><%= @imported_table.send(field_content) %></textarea>
   <input type="hidden" name="imported_table[<%= field_one %>]"
          value="<%= @imported_table.send(field_one) %>" />
   <input type="hidden" name="imported_table[<%= field_two %>]"

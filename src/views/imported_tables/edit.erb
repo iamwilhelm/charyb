@@ -2,7 +2,6 @@
       action="/datasources/<%= @datasource.id  %>/imported_tables/<%= @imported_table.id %>">
   <input type="hidden" name="_method" value="put" />
   <%= erb :"imported_tables/_form", :layout => false %>
-  <input id="imported_table_<%= @imported_table.id %>_preview" class="preview" 
-         type="button" value="Preview" />
   <input type="submit" value="Update" />
+  <input type="button" value="Color" onclick="colorTable()"/>
 </form>
