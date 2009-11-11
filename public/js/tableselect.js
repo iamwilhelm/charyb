@@ -3,7 +3,7 @@ var one, two, rows, cols, tbl, logicalTable;
 
 $(document).ready(function()
 {
-    $("#remote_page table").addClass("data");
+    $("#remote_page table").addClass("selectable");
     $("#remote_page table").mousedown(click);
 });
 
@@ -15,6 +15,8 @@ function setButton(fieldName)
 	return;
     }
 
+    $("th,td").removeClass(fieldName);
+
     var cells = $("th.selected,td.selected");
     var value = $.map(cells, function(nn,ii){ return trim(nn.innerHTML); });
     cells.addClass(fieldName);
@@ -25,19 +27,41 @@ function setButton(fieldName)
     else
 	$("#table_info textarea[name=imported_table["+fieldName+"_content]]").html(value.join("\n"));
 
-    $("#table_info input[name=imported_table[data_one]]").val(getXPath(one));
-    $("#table_info input[name=imported_table[data_two]]").val(getXPath(two));
+    $("#table_info input[name=imported_table["+fieldName+"_one]]").val(getXPath(one));
+    $("#table_info input[name=imported_table["+fieldName+"_two]]").val(getXPath(two));
 }
 
-function setColoring(xPathOne, xPathTwo)
+function colorTable()
 {
-    var result = document.evaluate(xPathOne, document, null, XPathResult.ANY_TYPE, null);
-    one = result.iterateNext();
+    colorSection($("#table_info input[name=imported_table[col_labels_one]]").val(), 
+		 $("#table_info input[name=imported_table[col_labels_two]]").val(), "col_labels", true);
+    colorSection($("#table_info input[name=imported_table[row_labels_one]]").val(), 
+		 $("#table_info input[name=imported_table[row_labels_two]]").val(), "row_labels", false);
+    colorSection($("#table_info input[name=imported_table[data_one]]").val(), 
+		 $("#table_info input[name=imported_table[data_two]]").val(), "data", false);
 
-    result = document.evaluate(xPathTwo, document, null, XPathResult.ANY_TYPE, null);
-    two = result.iterateNext();
+    var cells = $("th.data,td.data");
+    var value = $.map(cells, function(nn,ii){ return trim(nn.innerHTML); });
+    $("#table_info textarea[name=data_content]").html(value.join("\n"));
+}
 
-    update();
+function colorSection(xPathOne, xPathTwo, fieldName, findTbl)
+{
+    var remote = $("#remote_page").get(0);
+
+    one = document.evaluate(xPathOne, remote, null, XPathResult.ANY_TYPE, null).iterateNext();
+    two = document.evaluate(xPathTwo, remote, null, XPathResult.ANY_TYPE, null).iterateNext();
+
+    if (findTbl)
+    {
+	tbl = one.parentNode.parentNode.parentNode;
+	computeLogicalTable();
+    }
+
+    if (one==null || two==null || tbl==null)
+	return;
+
+    update(fieldName);
 }
 
 function trim(str)
@@ -67,8 +91,6 @@ function click(event)
 
 	one = event.target;
 	$(one).addClass("selected");
-
-	//$("input[@name=status]").attr("value", getXPath(one));
     }
     else
     {
@@ -78,26 +100,26 @@ function click(event)
 	two = event.target;
 	$(two).addClass("selected");
 
-	update();
+	update("selected");
     }
     return false;
 }
 
-function update()
+function update(className)
 {
     var r1, r2, c1, c2; // logical row and col
 
-    boxOne = lookupLogicalCorners(one);
-    boxTwo = lookupLogicalCorners(two);
-    selectedBox = combineBoxes(boxOne, boxTwo);
+    var boxOne = lookupLogicalCorners(one);
+    var boxTwo = lookupLogicalCorners(two);
+    var selectedBox = combineBoxes(boxOne, boxTwo);
 
     //alert(selectedBox.top + " " + selectedBox.left + " " + selectedBox.bottom + " "+ selectedBox.right);
     $("th,td", tbl).each(function()
     {
 	if (boxIntersects(lookupLogicalCorners(this), selectedBox))
-	    $(this).addClass("selected");
+	    $(this).addClass(className);
 	else
-	    $(this).removeClass("selected");
+	    $(this).removeClass(className);
     });
 }
 
@@ -191,15 +213,26 @@ function computeLogicalTable()
 // compute the xpath for the given node
 function getXPath(node)
 {
-    if (node.parentNode == null)
+    if (node.id == "remote_page")
 	return "";
     else
     {
-	var index = "";
-	for (var ii=0; ii<node.parentNode.childNodes.length; ii++)
-	  if (node.parentNode.childNodes[ii] == node)
-	      if (ii>0)
-		  index = "[" + ii + "]";
-	return getXPath(node.parentNode)  + "/" + node.nodeName + index;
+	var indexVal = 1;
+	var indexStr = "";
+	for (var ii=1; ii<node.parentNode.childNodes.length; ii++)
+	{
+	    if (node.parentNode.childNodes[ii] == node && indexVal>1)
+	    {
+		indexStr = "[" + indexVal + "]";
+		break;
+	    }
+	    if (node.parentNode.childNodes[ii].nodeName == node.nodeName)
+		indexVal++;
+	}
+	var sepStr = "/";
+	var parentStr = getXPath(node.parentNode);
+	if (parentStr == "")
+	    sepStr = "";
+	return parentStr + sepStr + node.nodeName + indexStr;
     }
 }

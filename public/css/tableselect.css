@@ -1,4 +1,4 @@
-table.data td:hover, table.data th:hover { background: yellow }
+table.selectable td:hover, table.selectable th:hover { background: yellow }
 th.selected, td.selected { background: #ee9999 }
 th.col_labels, td.col_labels { background: #77aa77 }
 th.row_labels, td.row_labels { background: #aa7777 }

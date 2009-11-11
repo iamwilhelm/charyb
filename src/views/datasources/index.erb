@@ -13,7 +13,7 @@
       <tr><td>Title</td><td>Type</td><td>Tables</td><td>Action</td></tr>
       <% if @datasources.each do |s| %>
         <tr><td>
-            <a href="/datasources/<%= s.id %>/<%= s.url_type %>"><%= s.url %></a> 
+            <a href="/datasources/<%= s.id %>/<%= s.url_type %>"><%= s.title %></a> 
           </td><td>
             <%= s.content_type %>
           </td><td>
