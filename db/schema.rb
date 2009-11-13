@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091105205200) do
+ActiveRecord::Schema.define(:version => 20091112211400) do
 
   create_table "datasources", :force => true do |t|
     t.string   "title",           :limit => 100,  :default => "Untitled Datasource"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(:version => 20091105205200) do
     t.string   "data_two",           :limit => 100,                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "default_dim",        :limit => 100, :default => "",  :null => false
   end
 
 end
