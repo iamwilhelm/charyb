@@ -58,6 +58,35 @@ namespace :db do
     Rake::Task["db:schema:dump"].invoke
   end
 
+  namespace :migrate do
+    desc  'Rollbacks the database one migration and re migrate up. If you want to rollback more than one step, define STEP=x. Target specific version with VERSION=x.'
+    task :redo => :environment do
+      if ENV["VERSION"]
+        Rake::Task["db:migrate:down"].invoke
+        Rake::Task["db:migrate:up"].invoke
+      else
+        Rake::Task["db:rollback"].invoke
+        Rake::Task["db:migrate"].invoke
+      end
+    end
+
+    desc 'Runs the "up" for a given migration VERSION.'
+    task :up => :environment do
+      version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      raise "VERSION is required" unless version
+      ActiveRecord::Migrator.run(:up, "db/migrations/", version)
+      Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+    end
+
+    desc 'Runs the "down" for a given migration VERSION.'
+    task :down => :environment do
+      version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
+      raise "VERSION is required" unless version
+      ActiveRecord::Migrator.run(:down, "db/migrations/", version)
+      Rake::Task["db:schema:dump"].invoke if ActiveRecord::Base.schema_format == :ruby
+    end
+  end
+
   namespace :schema do
     desc "dumps the database schema"
     task :dump do
