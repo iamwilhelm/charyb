@@ -1,4 +1,4 @@
-<% %w(table_heading descr col_heading row_heading other_dims default_dim published_at is_numeric units multiplier converter).each do |field| %>
+<% %w(table_heading descr col_heading row_heading other_dims default_dim published_at units multiplier is_numeric converter).each do |field| %>
   <label for="imported_table[<%= field %>]"><%= field.gsub(/_/, " ").capitalize %>:</label><br/>
   <input type="text" name="imported_table[<%= field %>]" 
          value="<%= @imported_table.send(field) %>" /><br/>

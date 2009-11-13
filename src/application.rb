@@ -6,6 +6,7 @@ require 'sinatra'
 require 'open-uri'
 require 'erb'
 require 'source_tracker'
+require 'update_redis'
 
 configure do
   # sets up the static files path
@@ -110,6 +111,8 @@ post '/datasources/:source_id/imported_tables' do
   @datasource = Source::Datasource.find(params["source_id"])
   @imported_table = @datasource.imported_tables.create!(params["imported_table"])
 
+  Charyb.update_redis(@datasource, @imported_table, params["data_content"])
+
   redirect back
 end
 
@@ -126,5 +129,7 @@ put '/datasources/:source_id/imported_tables/:id' do
   @imported_table = @datasource.imported_tables.find(params["id"])
   @imported_table.update_attributes(params["imported_table"])
   
+  Charyb.update_redis(@datasource, @imported_table, params["data_content"])
+
   redirect back
 end
