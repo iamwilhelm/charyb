@@ -29,13 +29,13 @@ module Charyb
         end
 
         pipe.write("default, \"" + imported_table.default_dim + "\"\n")
-        pipe.write("rowLabel, \"" + imported_table.row_heading + "\"\n")
         pipe.write("colLabel, \"" + imported_table.col_heading + "\"\n")
-        colHeaders = imported_table.col_labels_content.map{|s|quote(s)}
-        pipe.write("cols, " + colHeaders.join(",")  + "\n\n")
+        pipe.write("rowLabel, \"" + imported_table.row_heading + "\"\n")
+        col_labels = imported_table.col_labels_content.map{|s|quote(s)}
+        pipe.write("cols, " + col_labels.join(",")  + "\n\n")
 
         # write data
-        numCols = colHeaders.length
+        numCols = col_labels.length
         data = data.split("\n").map{|s|quote(s)};
         row_labels = imported_table.row_labels_content.map{|s|quote(s)};
         (0...row_labels.length).each do |rr|
