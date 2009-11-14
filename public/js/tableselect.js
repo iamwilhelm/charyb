@@ -1,16 +1,13 @@
 // globals
 var one, two, rows, cols, tbl, logicalTable;
 
-$(document).ready(function()
-{
+$(document).ready(function() {
     $("#remote_page table").addClass("selectable");
     $("#remote_page table").mousedown(click);
 });
 
-function setButton(fieldName)
-{
-    if (one==null || two==null)
-    {
+function setButton(fieldName) {
+    if (one==null || two==null) {
 	alert("Select region first");
 	return;
     }
@@ -18,7 +15,7 @@ function setButton(fieldName)
     $("th,td").removeClass(fieldName);
 
     var cells = $("th.selected,td.selected");
-    var value = $.map(cells, function(nn,ii){ return trim(nn.innerHTML); });
+    var value = $.map(cells, function(nn,ii) { return trim(nn.innerHTML); });
     cells.addClass(fieldName);
     cells.removeClass("selected");
 
@@ -31,82 +28,72 @@ function setButton(fieldName)
     $("#table_info input[name=imported_table["+fieldName+"_two]]").val(getXPath(two));
 }
 
-function colorTable()
-{
+function colorTable() {
     colorSection($("#table_info input[name=imported_table[col_labels_one]]").val(), 
 		 $("#table_info input[name=imported_table[col_labels_two]]").val(), "col_labels", true);
     colorSection($("#table_info input[name=imported_table[row_labels_one]]").val(), 
 		 $("#table_info input[name=imported_table[row_labels_two]]").val(), "row_labels", false);
     colorSection($("#table_info input[name=imported_table[data_one]]").val(), 
 		 $("#table_info input[name=imported_table[data_two]]").val(), "data", false);
-
+    
     var cells = $("th.data,td.data");
-    var value = $.map(cells, function(nn,ii){ return trim(nn.innerHTML); });
+    var value = $.map(cells, function(nn,ii) { return trim(nn.innerHTML); });
     $("#table_info textarea[name=data_content]").html(value.join("\n"));
 }
 
-function colorSection(xPathOne, xPathTwo, fieldName, findTbl)
-{
+function colorSection(xPathOne, xPathTwo, fieldName, findTbl) {
     var remote = $("#remote_page").get(0);
 
     one = document.evaluate(xPathOne, remote, null, XPathResult.ANY_TYPE, null).iterateNext();
     two = document.evaluate(xPathTwo, remote, null, XPathResult.ANY_TYPE, null).iterateNext();
 
-    if (findTbl)
-    {
+    if (findTbl) {
 	tbl = one.parentNode.parentNode.parentNode;
 	computeLogicalTable();
     }
-
+    
     if (one==null || two==null || tbl==null)
 	return;
 
     update(fieldName);
 }
 
-function trim(str)
-{
+function trim(str) {
     return str.replace(/^\s+|\s+$/g,"");
 }
 
-function clear(event)
-{
+function clear(event) {
     one = undefined;
     two = undefined;
 
     $("th,td").removeClass("selected");
 }
 
-function click(event)
-{
+function click(event) {
     if (!event.target)
 	return;
 
-    if (!event.shiftKey)
-    {
+    if (!event.shiftKey) {
 	tbl = event.target.parentNode.parentNode.parentNode;
-	computeLogicalTable()
+	computeLogicalTable();
 
 	clear(event);
 
 	one = event.target;
 	$(one).addClass("selected");
-    }
-    else
-    {
+    } else {
 	if (one == null)
 	    return;
-
+        
 	two = event.target;
 	$(two).addClass("selected");
-
+        
 	update("selected");
-    }
+    };
     return false;
 }
 
-function update(className)
-{
+function update(className) {
     var r1, r2, c1, c2; // logical row and col
 
     var boxOne = lookupLogicalCorners(one);
@@ -114,8 +101,7 @@ function update(className)
     var selectedBox = combineBoxes(boxOne, boxTwo);
 
     //alert(selectedBox.top + " " + selectedBox.left + " " + selectedBox.bottom + " "+ selectedBox.right);
-    $("th,td", tbl).each(function()
-    {
+    $("th,td", tbl).each(function() {
 	if (boxIntersects(lookupLogicalCorners(this), selectedBox))
 	    $(this).addClass(className);
 	else
@@ -123,36 +109,29 @@ function update(className)
     });
 }
 
-function lookupLogicalCorners(cell)
-{
+function lookupLogicalCorners(cell) {
     top = cell.parentNode.rowIndex;
     left = cell.cellIndex;
-    while (logicalTable[top].length>left
-	   && (logicalTable[top][left][0]!=cell.parentNode.rowIndex
-	       || logicalTable[top][left][1]!=cell.cellIndex))
+    while (logicalTable[top].length > left
+	   && (logicalTable[top][left][0] != cell.parentNode.rowIndex
+	       || logicalTable[top][left][1] != cell.cellIndex))
 	left++;
-    bottom = (isNaN(cell.rowSpan)) ? top : top+cell.rowSpan-1;
-    right = (isNaN(cell.colSpan)) ? left : left+cell.colSpan-1;
-    return {
-	top: top,
-	    left: left,
-	    bottom: bottom,
-	    right: right
-	    };
+    bottom = (isNaN(cell.rowSpan)) ? top : top+cell.rowSpan - 1;
+    right = (isNaN(cell.colSpan)) ? left : left+cell.colSpan - 1;
+    return { top: top,
+	     left: left,
+	     bottom: bottom,
+	     right: right };
 }
 
-function combineBoxes(cell1, cell2)
-{
-    return {
-	top: (cell1.top<cell2.top) ? cell1.top : cell2.top,
-	    left: (cell1.left<cell2.left) ? cell1.left : cell2.left,
-	    bottom: (cell1.bottom>cell2.bottom) ? cell1.bottom : cell2.bottom,
-	    right: (cell1.right>cell2.right) ? cell1.right : cell2.right
-	    };
+function combineBoxes(cell1, cell2) {
+    return { top: (cell1.top < cell2.top) ? cell1.top : cell2.top,
+             left: (cell1.left < cell2.left) ? cell1.left : cell2.left,
+             bottom: (cell1.bottom > cell2.bottom) ? cell1.bottom : cell2.bottom,
+             right: (cell1.right > cell2.right) ? cell1.right : cell2.right };
 }
 
-function boxIntersects(box1, box2)
-{
+function boxIntersects(box1, box2) {
     return box1.left <= box2.right
 	&& box1.right >= box2.left 
 	&& box1.top <= box2.bottom
@@ -161,13 +140,11 @@ function boxIntersects(box1, box2)
 
 // counts table rows and column, taking into account col and rowspans
 // assumes all rows have the same number of columns
-function computeLogicalTable()
-{
+function computeLogicalTable() {
     // figure out the size of the logical table
     cols = 0;
     rows = $("tr", tbl).length;
-    $("tr:first > th,tr:first > td").each(function()
-    {
+    $("tr:first > th,tr:first > td").each(function() {
 	if (isNaN($(this).attr("colSpan")))
 	    cols++;
 	else
@@ -176,11 +153,9 @@ function computeLogicalTable()
 
     // allocate the logical table
     logicalTable = new Array();
-    for (rr=0; rr<rows; rr++)
-    {
+    for (rr = 0; rr < rows; rr++) {
 	logicalTable[rr] = new Array();
-	for (cc=0; cc<cols; cc++)
-	{
+	for (cc = 0; cc < cols; cc++) {
 	    logicalTable[rr][cc] = new Array();
 	    logicalTable[rr][cc][0] = -1;
 	    logicalTable[rr][cc][1] = -1;
@@ -189,8 +164,7 @@ function computeLogicalTable()
 
     // go through the actual table cells, row by row, filling in the logical table with
     // indices to which actual cell each logical cell points.
-    $("th,td", tbl).each(function()
-    {
+    $("th,td", tbl).each(function() {
 	var aRow = this.parentNode.rowIndex; // actual row (in html)
 	var aCol = this.cellIndex;	     // actual col
 	var lRow = aRow; // logical row (in table)
@@ -199,30 +173,24 @@ function computeLogicalTable()
 	    lCol++;
 	var rowSpan = (this.rowSpan>1) ? this.rowSpan : 1;
 	var colSpan = (this.colSpan>1) ? this.colSpan : 1;
-	for (rr=lRow; rr<lRow+rowSpan; rr++)
-	{
-	    for (cc=lCol; cc<lCol+colSpan; cc++)
-	    {
+	for (rr=lRow; rr<lRow+rowSpan; rr++) {
+	    for (cc=lCol; cc<lCol+colSpan; cc++) {
 		logicalTable[rr][cc][0] = aRow;
-		logicalTable[rr][cc][1] = aCol;
+                logicalTable[rr][cc][1] = aCol;
 	    }
 	}
     });
 }
 
 // compute the xpath for the given node
-function getXPath(node)
-{
-    if (node.id == "remote_page")
+function getXPath(node) {
+    if (node.id == "remote_page") {
 	return "";
-    else
-    {
+    } else {
 	var indexVal = 1;
 	var indexStr = "";
-	for (var ii=1; ii<node.parentNode.childNodes.length; ii++)
-	{
-	    if (node.parentNode.childNodes[ii] == node && indexVal>1)
-	    {
+	for (var ii = 1; ii < node.parentNode.childNodes.length; ii++) {
+	    if (node.parentNode.childNodes[ii] == node && indexVal > 1) {
 		indexStr = "[" + indexVal + "]";
 		break;
 	    }
