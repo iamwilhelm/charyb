@@ -15,7 +15,7 @@ function setButton(fieldName) {
     $("th,td").removeClass(fieldName);
 
     var cells = $("th.selected,td.selected");
-    var value = $.map(cells, function(nn,ii) { return trim(nn.innerHTML); });
+    var value = $.map(cells, function(nn, ii) { return $.trim(nn.innerHTML); });
     cells.addClass(fieldName);
     cells.removeClass("selected");
 
@@ -37,7 +37,7 @@ function colorTable() {
 		 $("#table_info input[name=imported_table[data_two]]").val(), "data", false);
     
     var cells = $("th.data,td.data");
-    var value = $.map(cells, function(nn,ii) { return trim(nn.innerHTML); });
+    var value = $.map(cells, function(nn,ii) { return $.trim(nn.innerHTML); });
     $("#table_info textarea[name=data_content]").html(value.join("\n"));
 }
 
@@ -56,10 +56,6 @@ function colorSection(xPathOne, xPathTwo, fieldName, findTbl) {
 	return;
 
     update(fieldName);
-}
-
-function trim(str) {
-    return str.replace(/^\s+|\s+$/g,"");
 }
 
 function clear(event) {
