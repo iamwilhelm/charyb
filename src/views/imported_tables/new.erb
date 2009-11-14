@@ -1,5 +1,4 @@
-<form method="post" class="previewable" 
-      action="/datasources/<%= @datasource.id  %>/imported_tables">
+<form method="post" action="/datasources/<%= @datasource.id  %>/imported_tables">
   <%= erb :"imported_tables/_form", :layout => false %>
   <input type="submit" value="Create" />
 </form>

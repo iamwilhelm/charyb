@@ -3,11 +3,11 @@
   <input type="text" name="imported_table[<%= field %>]" 
          value="<%= @imported_table.send(field) %>" /><br/>
 <% end %>
-<% %w(col_labels row_labels).each do |field| %>
 
-   <% field_one = field+"_one" %>
-   <% field_two = field+"_two" %>
-   <% field_content = field+"_content" %>
+<% %w(col_labels row_labels).each do |field| %>
+   <% field_one = field + "_one" %>
+   <% field_two = field + "_two" %>
+   <% field_content = field + "_content" %>
 
   <input type="button" name="button" value="set" onclick="setButton('<%= field %>')" />
   <label for="imported_table[<%= field %>]"><%= field.gsub(/_/, " ").capitalize %>:</label>
@@ -19,7 +19,6 @@
   <input type="hidden" name="imported_table[<%= field_two %>]"
          value="<%= @imported_table.send(field_two) %>" />
   <br/>
-
 <% end %>
 
 <input type="button" name="button" value="set" onclick="setButton('data')" />
