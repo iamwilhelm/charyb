@@ -5,9 +5,9 @@
 <% end %>
 
 <% %w(col_labels row_labels).each do |field| %>
-   <% field_one = field + "_one" %>
-   <% field_two = field + "_two" %>
-   <% field_content = field + "_content" %>
+  <% field_one = field + "_one" %>
+  <% field_two = field + "_two" %>
+  <% field_content = field + "_content" %>
 
   <input type="button" name="button" value="set" onclick="setButton('<%= field %>')" />
   <label for="imported_table[<%= field %>]"><%= field.gsub(/_/, " ").capitalize %>:</label>
@@ -27,9 +27,9 @@
 
 <textarea name="data_content"></textarea>
 <input type="hidden" name="imported_table[data_one]"
-       value="<%= @imported_table.send('data_one') %>" />
+       value="<%= @imported_table.data_one %>" />
 <input type="hidden" name="imported_table[data_two]"
-       value="<%= @imported_table.send('data_two') %>" />
+       value="<%= @imported_table.data_two %>" />
 <br/>
 
 <label for="imported_table[notes]">Notes:</label><br/>

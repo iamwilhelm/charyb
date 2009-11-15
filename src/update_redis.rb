@@ -39,7 +39,7 @@ module Charyb
         data = data.split("\n").map{|s|quote(s)};
         row_labels = imported_table.row_labels_content.map{|s|quote(s)};
         (0...row_labels.length).each do |rr|
-          pipe.write(row_labels[rr] + ", " + data[rr*numCols,numCols].join(",") + "\n")
+          pipe.write(row_labels[rr] + ", " + data[rr * numCols, numCols].join(",") + "\n")
         end
 
         pipe.close_write

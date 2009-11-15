@@ -7,25 +7,25 @@ $(document).ready(function() {
 });
 
 function setButton(fieldName) {
-    if (one==null || two==null) {
+    if (one == null || two == null) {
 	alert("Select region first");
 	return;
     }
 
-    $("th,td").removeClass(fieldName);
+    $("th, td").removeClass(fieldName);
 
-    var cells = $("th.selected,td.selected");
-    var value = $.map(cells, function(nn, ii) { return $.trim(nn.innerHTML); });
+    var cells = $("th.selected, td.selected");
+    var value = $.map(cells, function(cell) { return $.trim(cell.innerHTML); });
     cells.addClass(fieldName);
     cells.removeClass("selected");
 
-    if (fieldName=="data")
+    if (fieldName == "data")
 	$("#table_info textarea[name=data_content]").html(value.join("\n"));
     else
-	$("#table_info textarea[name=imported_table["+fieldName+"_content]]").html(value.join("\n"));
+	$("#table_info textarea[name=imported_table[" + fieldName + "_content]]").html(value.join("\n"));
 
-    $("#table_info input[name=imported_table["+fieldName+"_one]]").val(getXPath(one));
-    $("#table_info input[name=imported_table["+fieldName+"_two]]").val(getXPath(two));
+    $("#table_info input[name=imported_table[" + fieldName + "_one]]").val(getXPath(one));
+    $("#table_info input[name=imported_table[" + fieldName + "_two]]").val(getXPath(two));
 }
 
 function colorTable() {
@@ -37,7 +37,7 @@ function colorTable() {
 		 $("#table_info input[name=imported_table[data_two]]").val(), "data", false);
     
     var cells = $("th.data,td.data");
-    var value = $.map(cells, function(nn,ii) { return $.trim(nn.innerHTML); });
+    var value = $.map(cells, function(cell) { return $.trim(cell.innerHTML); });
     $("#table_info textarea[name=data_content]").html(value.join("\n"));
 }
 
@@ -169,8 +169,8 @@ function computeLogicalTable() {
 	    lCol++;
 	var rowSpan = (this.rowSpan>1) ? this.rowSpan : 1;
 	var colSpan = (this.colSpan>1) ? this.colSpan : 1;
-	for (rr=lRow; rr<lRow+rowSpan; rr++) {
-	    for (cc=lCol; cc<lCol+colSpan; cc++) {
+	for (rr = lRow; rr < lRow + rowSpan; rr++) {
+	    for (cc = lCol; cc < lCol + colSpan; cc++) {
 		logicalTable[rr][cc][0] = aRow;
                 logicalTable[rr][cc][1] = aCol;
 	    }
