@@ -57,7 +57,9 @@ require 'models'
 
 module Charyb
   # set the datasource logger
-  ActiveRecord::Base.logger = Logger.new(DATASOURCES_LOG_PATH)
+  @logger = Logger.new(DATASOURCES_LOG_PATH)
+  ActiveRecord::Base.logger = @logger
+  def self.logger; @logger; end
 
   # establish the active record connection to datasource db
   @connection = ActiveRecord::Base.establish_connection(:adapter => "sqlite3",
