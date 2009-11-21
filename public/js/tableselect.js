@@ -185,8 +185,8 @@ function getXPath(node) {
     } else {
 	var indexVal = 1;
 	var indexStr = "";
-	for (var ii = 1; ii < node.parentNode.childNodes.length; ii++) {
-	    if (node.parentNode.childNodes[ii] == node && indexVal > 1) {
+	for (var ii = 0; ii < node.parentNode.childNodes.length; ii++) {
+	    if (node.parentNode.childNodes[ii] == node && indexVal > 0) {
 		indexStr = "[" + indexVal + "]";
 		break;
 	    }
