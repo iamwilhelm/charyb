@@ -5,7 +5,7 @@
 import os, os.path, sys, traceback, csv
 import redis
 
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 
 class Importer:
     def __init__(self, fn, dbnum):
@@ -41,6 +41,12 @@ class Importer:
                 self.hdr[key] = map(lambda x: x.strip(), fields[1:])
             else:
                 self.hdr[key] = fields[1].strip()
+
+        # cols must always be a list 
+        # TODO units also
+        for ff in ['cols']:
+            if isinstance(self.hdr[ff], str):
+                self.hdr[ff] = [ self.hdr[ff] ]
 
         if not 'name' in self.hdr:
             raise Exception('header must contain a name')
