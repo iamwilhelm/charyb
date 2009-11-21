@@ -77,20 +77,11 @@ it'll also do CSV files as well. It stores this information in the
 SourceTracker, which is a wrapper around an SQLite database.
 
 The crawler is run separately and uses the SourceTracker's information about 
-where a datasource can be found and how to suck it in.  It uses css selectors 
-to find these elements.  Basically, if you know how to write CSS, you know 
-how to use css selectors.  You can read about them:
+where a datasource can be found and how to suck it in.
 
-an overview: 
-http://wiki.github.com/whymirror/hpricot/supported-css-selectors
-a big tutorial:
-http://css.maxdesign.com.au/selectutorial/
-
-When the crawler sucks in the data and cleaned it properly, it then pushes it 
-to the datawarehouse, which we currently use couchdb for.  Then teabag later 
-on queries couchdb when it gets web requests from the outside world.  
-
-Which part don't you understand?  Or do you not know where to start?
+When the crawler sucks in the data and cleaned it properly, it then
+pushes it to the redis datawarehouse.  Then teabag queries the
+datawarehouse when it gets web requests from the outside world.
 
 The web part starts with src/application.rb  it requires 'config/initialize' 
 at the top, which sets all the global constants and paths.  you can find it 
@@ -107,3 +98,77 @@ http://api.rubyonrails.org/classes/ActiveRecord/Base.html
 
 If you have specific questions, don't hesitate to ask either email or by 
 phone.
+
+h2. Import Table Use Case
+
+1. user starts the web interface (rake web:run) from a console.
+2. webserver starts, messages scroll by in the console.
+3. user opens a browser to http://localhost:4567
+4. browser opens showing the charyb front page.
+5. user enters the url of a page containing an html table into the
+   textfield and clicks "submit."
+6. browser shows requested page in left div and list of tables
+   imported from that page (none) and a button to add a new table in
+   the right div.
+7. user clicks "Add a table."
+8. a form is displayed in the right div.
+9. user fills out the fields from "Table heading" to "Converter."
+   Some fields have special formatting rules:
+   - "col heading" and "row heading" can be "category" if no word
+     describes the collection of headings.
+   - "other dims" should be a csv list of "dimension name, dimension value" pairs.
+   - "published at" should be a date, eg. "01/01/2009."
+   - "units" can be a single value or can be a csv list for each column.
+   - "converter" can be blank, or a single value, or a csv list for each
+     column.  values must match a converter name.
+10. user clicks a cell at one corner of the column headers in the table
+    on the right div.
+11. the cell is colored red.
+12. user shift-clicks a cell at the opposite corner of the column headers.
+13. the column headers are all colored red.
+14. the user clicks the "set" button next to "Col labels."
+15. the column headers are all colored green, their values are listed
+    in the "Col labels" textarea.
+16. the user does the same for row headers and data.
+17. row headers are colored brown; data cells are colored purple.
+18. user clicks "Create."
+19. right div removes the form and lists the table as a link.
+
+
+h2. Edit Table Use Case
+1. user starts the web interface (rake web:run) from a console.
+2. webserver starts, messages scroll by in the console.
+3. user opens a browser to http://localhost:4567
+4. browser opens showing the charyb front page.
+5. user clicks on a datasource title link.
+6. browser shows requested page in left div and list of tables
+   imported from that page with edit buttons, and a button to add a
+   new table in the right div.
+7. user clicks edit.
+8. browser shows partially completed form used to import the table.
+9. user clicks "Color" button.
+10. browser selects cells in the table in the right div, coloring the
+   table as it was when it was imported, and fills in the textareas
+   with selected values in the form.
+11. user makes changes and clicks "Update."
+12. right div removes the form and lists the table as a link.
+
+
+h2. cli commands to look into redis
+In the following commands, all spaces are replaced by underscores.
+This is only for input.  The result can contain spaces.
+
+> redis-cli smembers datasets
+lists datasets by name
+
+> redis-cli smembers "[dsname]||dimensions"
+lists the dimensions of dataset dsname.
+
+> redis-cli smembers "[dsname]||[dimname]"
+lists the values of the dimension dimname.
+
+> redis-cli smembers "[dsname]||meta"
+lists metadata for a dataset.
+
+> redis-cli get "[dsname]||[dimvalue]||[nextdimvalue]"
+returns a value.
