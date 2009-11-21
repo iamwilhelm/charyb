@@ -146,7 +146,7 @@ h2. Edit Table Use Case
    new table in the right div.
 7. user clicks edit.
 8. browser shows partially completed form used to import the table.
-9. user clicks "Color" button.
+9. user clicks "Finish Loading" button.
 10. browser selects cells in the table in the right div, coloring the
    table as it was when it was imported, and fills in the textareas
    with selected values in the form.
