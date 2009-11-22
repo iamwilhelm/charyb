@@ -5,7 +5,7 @@
 import os, os.path, sys, traceback, csv
 import redis
 
-VERSION = '0.0.4'
+VERSION = '0.1.0'
 
 class Importer:
     def __init__(self, fn, dbnum):
@@ -14,10 +14,11 @@ class Importer:
         self.hdr = {}
         self.data = None
         self.name = None
+        self.dbnum = dbnum
         self.db = redis.Redis(db=dbnum)
 
     def _openFile(self):
-        # check that file exists
+        # check that file exists, open it.  if not file, read from stdin
         if (self.fname == None):
             print 'reading from stdin'
             self.fin = sys.stdin
@@ -36,34 +37,21 @@ class Importer:
                 break
             key = fields[0].strip()
             if key == 'otherdim':
-                self.hdr[key].append(map(lambda x: x.strip(), fields[1:]))
+                self.hdr[key].append([ x.strip() for x in fields[1:] ])
             elif len(fields)>2:
-                self.hdr[key] = map(lambda x: x.strip(), fields[1:])
+                self.hdr[key] = [ x.strip() for x in fields[1:] ]
             else:
                 self.hdr[key] = fields[1].strip()
 
-        # cols must always be a list 
-        # TODO units also
-        for ff in ['cols']:
+        # some fields must always be lists
+        for ff in ['cols', 'units', 'default']:
             if isinstance(self.hdr[ff], str):
                 self.hdr[ff] = [ self.hdr[ff] ]
 
-        if not 'name' in self.hdr:
-            raise Exception('header must contain a name')
-        if not 'descr' in self.hdr:
-            raise Exception('header must contain a description')
-        if not 'source' in self.hdr:
-            raise Exception('header must contain a source')
-        if not 'url' in self.hdr:
-            raise Exception('header must contain a url')
-        if not 'units' in self.hdr:
-            raise Exception('header must contain units')
-        if not 'default' in self.hdr:
-            raise Exception('header must contain default')
-        if not 'colLabel' in self.hdr or not 'rowLabel' in self.hdr:
-            raise Exception('header must contain column and row headers')
-        if not 'cols' in self.hdr:
-            raise Exception('header must contain a list of cols')
+        # make sure required fields are present
+        for ff in ['name', 'descr', 'source', 'url', 'units', 'default', 'colLabel', 'cols']:
+            if not ff in self.hdr:
+                raise Exception('header must contain an entry for ' + ff)
 
         self.name = self.hdr['name'].replace(' ','_')
 
@@ -87,8 +75,8 @@ class Importer:
             self.db.sadd(self.name+'||meta', 'descr||' + self.hdr['descr'])
             self.db.sadd(self.name+'||meta', 'source||' + self.hdr['source'])
             self.db.sadd(self.name+'||meta', 'url||' + self.hdr['url'])
-            self.db.sadd(self.name+'||meta', 'units||' + self.hdr['units']) # assumes one
-            self.db.sadd(self.name+'||meta', 'default||' + self.hdr['default']) # assumes one
+            self.db.sadd(self.name+'||meta', 'units||' + self.hdr['units'][0]) # assumes one
+            self.db.sadd(self.name+'||meta', 'default||' + self.hdr['default'][0]) # assumes one
 
             self.db.sadd(self.name+'||dimensions', self.hdr['colLabel'])
             self.db.sadd(self.name+'||dimensions', self.hdr['rowLabel'])
@@ -113,7 +101,7 @@ class Importer:
                 rowHdr[1] = fields[0]
                 for ii in range(1,len(fields)):
                     colHdr[1] = self.hdr['cols'][ii-1]
-                    key = self.name+'||'+'||'.join(map(lambda x: x[1], dims))
+                    key = self.name+'||'+'||'.join([ x[1] for x in dims ])
                     key = key.replace(' ','_')
                     self.db.set(key, fields[ii])
 
