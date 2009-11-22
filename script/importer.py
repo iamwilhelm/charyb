@@ -3,6 +3,7 @@
 # imports a table into the db
 
 import os, os.path, sys, traceback, csv
+sys.path.append('redis')
 import redis
 
 VERSION = '0.1.0'

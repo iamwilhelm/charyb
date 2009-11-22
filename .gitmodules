@@ -7,3 +7,6 @@
 [submodule "vendor/french_maid"]
 	path = vendor/french_maid
 	url = git@github.com:iamwilhelm/french_maid.git
+[submodule "script/redis"]
+	path = script/redis
+	url = git://github.com/andymccurdy/redis-py.git
