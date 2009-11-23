@@ -2,10 +2,11 @@ name, Oil
 descr, "Info about oil, 1995"
 source, Oil Companies
 url, "http://www.oil.com/data.csv"
-date, 1995
+license, Public Domain
+publishDate, 1995
 units, Barrels
 default, "Year"
-otherdim, Year, 1995
+otherDim, Year, 1995
 rowLabel,"State"
 colLabel,Category
 cols, Production, Consumption, Consumption|Motor, Consumption|Heat, Consumption|Kill

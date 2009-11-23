@@ -2,7 +2,7 @@
 
 # imports a table into the db
 
-import os, os.path, sys, traceback, csv
+import os, os.path, sys, traceback, csv, json
 sys.path.append('redis')
 import redis
 
@@ -31,13 +31,13 @@ class Importer:
 
     def _readHeader(self):
         # read header from file
-        self.hdr['otherdim'] = []
+        self.hdr['otherDim'] = []
 
         for fields in self.csvIn:
             if len(fields) == 0:
                 break
             key = fields[0].strip()
-            if key == 'otherdim':
+            if key == 'otherDim':
                 self.hdr[key].append([ x.strip() for x in fields[1:] ])
             elif len(fields)>2:
                 self.hdr[key] = [ x.strip() for x in fields[1:] ]
@@ -45,12 +45,12 @@ class Importer:
                 self.hdr[key] = fields[1].strip()
 
         # some fields must always be lists
-        for ff in ['cols', 'units', 'default']:
+        for ff in ['cols', 'units']:
             if isinstance(self.hdr[ff], str):
                 self.hdr[ff] = [ self.hdr[ff] ]
 
         # make sure required fields are present
-        for ff in ['name', 'descr', 'source', 'url', 'units', 'default', 'colLabel', 'cols']:
+        for ff in ['name', 'descr', 'source', 'url', 'units', 'default', 'colLabel', 'cols', 'license']:
             if not ff in self.hdr:
                 raise Exception('header must contain an entry for ' + ff)
 
@@ -65,50 +65,85 @@ class Importer:
             keys = self.db.keys(self.name+'*')
             for kk in keys:
                 self.db.delete(kk)
+        else:
+            print "lookfor: " + self.hdr['name']
+            print "in: " + str(self.db.smembers('datasets'))
+
+    def _readData(self):
+        # read row labels and data
+        self.hdr['rows'] = []
+        self.data = []
+        for fields in self.csvIn:
+            self.hdr['rows'].append(fields[0])
+            self.data.append(fields[1:])
 
     def _importData(self):
         # finish reading the input file, saving the row names and saving the data to the db
         # add header info to the db
         print 'importing: ' + self.hdr['name']
         try:
+            self._readData()
+
             self.db.sadd('datasets', self.hdr['name'])
 
-            self.db.sadd(self.name+'||meta', 'descr||' + self.hdr['descr'])
-            self.db.sadd(self.name+'||meta', 'source||' + self.hdr['source'])
-            self.db.sadd(self.name+'||meta', 'url||' + self.hdr['url'])
-            self.db.sadd(self.name+'||meta', 'units||' + self.hdr['units'][0]) # assumes one
-            self.db.sadd(self.name+'||meta', 'default||' + self.hdr['default'][0]) # assumes one
+            # TODO load exiting meta struct if it exists
+            # if it exists, then we dimension labels should add to existing sets
 
-            self.db.sadd(self.name+'||dimensions', self.hdr['colLabel'])
-            self.db.sadd(self.name+'||dimensions', self.hdr['rowLabel'])
-            for cc in self.hdr['cols']:
-                self.db.sadd(self.name+'||'+self.hdr['colLabel'].replace(' ','_'), cc)
+            # pack metadata into struct
+            meta = {}
+            meta['descr'] = self.hdr['descr']
+            meta['dims'] = []
+
+            # add row dimension
+            dim = {}
+            dim['name'] = self.hdr['rowLabel']
+            dim['labels'] = [ {'val': x} for x in self.hdr['rows'] ]
+            meta['dims'].append(dim)
+
+            # add col dimension (one for each if categories)
+            dim = {}
+            dim['name'] = self.hdr['colLabel']
+            dim['labels'] = [ {'val': x} for x in self.hdr['cols'] ]
+            if (len(self.hdr['units'])==1):
+                dim['labels'] = [ {'val': x} for x in self.hdr['cols'] ]
+                dim['units'] = self.hdr['units'][0]
+            else:
+                dim['labels'] = [ {'val': x, 'units': y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
+            dim['url'] = self.hdr['url']
+            dim['license'] = self.hdr['license']
+            dim['source'] = self.hdr['source']
+            dim['publishDate'] = self.hdr['publishDate']
+            dim['default'] = self.hdr['default']
+            meta['dims'].append(dim)
 
             # import other dimension names
             dims = []
-            for name,value in self.hdr['otherdim']:
-                self.db.sadd(self.name+'||dimensions', name)
+            for name,value in self.hdr['otherDim']:
+                dim = {}
+                dim['name'] = name
+                dim['labels'] = value
+                meta['dims'].append(dim)
                 dims.append([name,value])
-                self.db.sadd(self.name+'||'+name.replace(' ','_'), value)
 
-            # add the table's column names and data to the db
-            self.hdr['rows'] = []
+            # sort dimensions by name
+            meta['dims'].sort(key=lambda x: x['name'])
+
+            # store metadata as json string
+            metaStr = json.dumps(meta)
+            self.db.set(self.name, metaStr)
+
+            # add the data to the db
             rowHdr = [self.hdr['rowLabel'], '']
             colHdr = [self.hdr['colLabel'], '']
             dims += [rowHdr, colHdr]
             dims.sort()
-            for fields in self.csvIn:
-                self.hdr['rows'].append(fields[0])
-                rowHdr[1] = fields[0]
-                for ii in range(1,len(fields)):
-                    colHdr[1] = self.hdr['cols'][ii-1]
-                    key = self.name+'||'+'||'.join([ x[1] for x in dims ])
+            for rh,rd in zip(self.hdr['rows'],self.data):
+                rowHdr[1] = rh
+                for ch,cd in zip(self.hdr['cols'],rd):
+                    colHdr[1] = ch
+                    key = self.name+'|'+'|'.join([ x[1] for x in dims ])
                     key = key.replace(' ','_')
-                    self.db.set(key, fields[ii])
-
-            # import list of row names
-            for rr in self.hdr['rows']:
-                self.db.sadd(self.name+'||'+self.hdr['rowLabel'].replace(' ','_'), rr)
+                    self.db.set(key, cd)
                 
         except Exception, ex:
             print 'FAIL: ' + str(ex)
@@ -127,7 +162,7 @@ class Importer:
         # import a table into the db.  if its already there, remove it first
         self._openFile()
         self._readHeader()
-        if not 'otherdim' in self.hdr:
+        if len(self.hdr['otherDim'])==0:
             self._remove()
         self._importData()
         self.fin.close()

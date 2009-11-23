@@ -1,16 +1,16 @@
-name, Whales
-descr, "Whale Population"
-source, Greenpeace
-url, "http://www.gp.org/whales.csv"
-license, Public Domain
-publishDate, 1985
-units, Animals
+name, Peanut Butter
+descr, "Uses of Peanut Butter"
+source, Jiffy
+url, "http://www.jiffy.org/peanut_butter.csv"
+license, "Public Domain"
+publishDate, 2009
+units, Tons, Gallons, Tons, Gallons, Tons, Tons
 default, "State"
 rowLabel,"State"
 colLabel, Category
-cols, Total, Humpback Whale, Sperm Whale, Blue Whale, Grey Whale, Pygmy Whale
+cols, PBJ, Lubricant, Cerial, Hair Product, Donut, Smores
 
-United States,		          5.16637237e+04, 1.03299659e+04, 1.03444892e+04, 1.03134903e+04, 1.03498699e+04, 1.03259084e+04
+Total,  		          5.16637237e+04, 1.03299659e+04, 1.03444892e+04, 1.03134903e+04, 1.03498699e+04, 1.03259084e+04
 Alabama,		          1.01539080e+03, 2.04494633e+02, 2.04657492e+02, 2.01009647e+02, 2.04706163e+02, 2.00522862e+02
 Alaska,			          1.01180846e+03, 2.01366761e+02, 2.01289166e+02, 2.01334360e+02, 2.03614855e+02, 2.04203314e+02
 Arizona,		          1.01688395e+03, 2.02077637e+02, 2.04060668e+02, 2.03764858e+02, 2.03633325e+02, 2.03347465e+02

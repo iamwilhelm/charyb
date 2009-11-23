@@ -2,7 +2,8 @@ name, Banks
 descr, "Number of Banks"
 source, The Fed
 url, "http://www.banks.gov/data.csv"
-date, 1980
+license, Public Domain
+publishDate, 1980
 units, Buildings
 default, "Year"
 rowLabel,"State"
