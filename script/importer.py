@@ -8,15 +8,18 @@ import redis
 
 VERSION = '0.1.0'
 
+def _under(str):
+    return str.replace(' ','_')
+
 class Importer:
-    def __init__(self, fn, dbnum):
+    def __init__(self, fn, dbNum):
         self.fname = fn
         self.fin = None
         self.hdr = {}
         self.data = None
         self.name = None
-        self.dbnum = dbnum
-        self.db = redis.Redis(db=dbnum)
+        self.dbNum = dbNum
+        self.db = redis.Redis(db=dbNum+1)
 
     def _openFile(self):
         # check that file exists, open it.  if not file, read from stdin
@@ -54,20 +57,30 @@ class Importer:
             if not ff in self.hdr:
                 raise Exception('header must contain an entry for ' + ff)
 
-        self.name = self.hdr['name'].replace(' ','_')
+        self.name = _under(self.hdr['name'])
 
     def _remove(self):
         # remove the table whos header is loaded
+        self.db.select(self.dbNum+1)
         if self.db.sismember('datasets', self.hdr['name']):
             print 'removing: ' + self.hdr['name']
-            self.db.srem('datasets', self.hdr['name'])
+            meta = json.loads(self.db.get(self.name))
 
+            # remove meta
+            self.db.srem('datasets', self.hdr['name'])
+            self.db.delete(self.name)
+
+            # remove data
             keys = self.db.keys(self.name+'*')
             for kk in keys:
                 self.db.delete(kk)
-        else:
-            print "lookfor: " + self.hdr['name']
-            print "in: " + str(self.db.smembers('datasets'))
+
+            # remove search terms
+            self.db.select(self.dbNum)
+            for ss in self._getSearchTerms(meta['dims']):
+                self.db.srem(_under(ss), self.hdr['name'])
+                if self.db.scard(_under(ss))==0:
+                    self.db.delete(_under(ss))
 
     def _readData(self):
         # read row labels and data
@@ -77,6 +90,16 @@ class Importer:
             self.hdr['rows'].append(fields[0])
             self.data.append(fields[1:])
 
+    def _getSearchTerms(self, dims):
+        # get a list of search terms given a list of dimensions or labels of a category
+        ret = [ self.hdr['name'] ]
+        for dd in dims:
+            if dd['name'] == 'Category':
+                ret += self._getSearchTerms(dd['labels'])
+            elif dd['name'] not in ['State', 'Year', 'Country']:
+                ret.append(dd['name'])
+        return ret
+
     def _importData(self):
         # finish reading the input file, saving the row names and saving the data to the db
         # add header info to the db
@@ -84,6 +107,7 @@ class Importer:
         try:
             self._readData()
 
+            self.db.select(self.dbNum+1)
             self.db.sadd('datasets', self.hdr['name'])
 
             # TODO load exiting meta struct if it exists
@@ -97,18 +121,18 @@ class Importer:
             # add row dimension
             dim = {}
             dim['name'] = self.hdr['rowLabel']
-            dim['labels'] = [ {'val': x} for x in self.hdr['rows'] ]
+            dim['labels'] = [ {'name': x} for x in self.hdr['rows'] ]
             meta['dims'].append(dim)
 
             # add col dimension (one for each if categories)
             dim = {}
             dim['name'] = self.hdr['colLabel']
-            dim['labels'] = [ {'val': x} for x in self.hdr['cols'] ]
+            dim['labels'] = [ {'name': x} for x in self.hdr['cols'] ]
             if (len(self.hdr['units'])==1):
-                dim['labels'] = [ {'val': x} for x in self.hdr['cols'] ]
+                dim['labels'] = [ {'name': x} for x in self.hdr['cols'] ]
                 dim['units'] = self.hdr['units'][0]
             else:
-                dim['labels'] = [ {'val': x, 'units': y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
+                dim['labels'] = [ {'name': x, 'units': y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
             dim['url'] = self.hdr['url']
             dim['license'] = self.hdr['license']
             dim['source'] = self.hdr['source']
@@ -119,10 +143,7 @@ class Importer:
             # import other dimension names
             dims = []
             for name,value in self.hdr['otherDim']:
-                dim = {}
-                dim['name'] = name
-                dim['labels'] = value
-                meta['dims'].append(dim)
+                meta['dims'].append({'name': name, 'labels': value})
                 dims.append([name,value])
 
             # sort dimensions by name
@@ -144,6 +165,11 @@ class Importer:
                     key = self.name+'|'+'|'.join([ x[1] for x in dims ])
                     key = key.replace(' ','_')
                     self.db.set(key, cd)
+
+            # add lookup data
+            self.db.select(self.dbNum)
+            for ss in self._getSearchTerms(meta['dims']):
+                self.db.sadd(_under(ss), self.hdr['name'])
                 
         except Exception, ex:
             print 'FAIL: ' + str(ex)
