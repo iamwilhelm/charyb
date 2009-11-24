@@ -130,9 +130,8 @@ class Importer:
             else:
                 dim = dim[0]
             labelNames = [ x['name'] for x in dim['labels'] ]
-            for ll in self.hdr['rows']:
-                if ll not in labelNames:
-                    dim['labels'].append({'name': ll})
+            for ll in set(self.hdr['rows']).difference(labelNames):
+                dim['labels'].append({'name': ll})
 
             # add col dimension (one for each if categories)
             dim = filter(lambda x: x['name'] == self.hdr['colLabel'], meta['dims'])
@@ -149,13 +148,13 @@ class Importer:
             dim['publishDate'] = self.hdr['publishDate']
             dim['default'] = self.hdr['default']
 
-            for ll in self.hdr['rows']:
-                if ll not in labelNames:
-                    if (len(self.hdr['units'])==1):
-                        dim['labels'] = [ {'name': x} for x in self.hdr['cols'] ]
-                        dim['units'] = self.hdr['units'][0]
-                    else:
-                        dim['labels'] = [ {'name': x, 'units': y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
+            labelNames = [ x['name'] for x in dim['labels'] ]
+            for ll in set(self.hdr['cols']).difference(labelNames):
+                if (len(self.hdr['units'])==1):
+                    dim['labels'] = [ {'name': x} for x in self.hdr['cols'] ]
+                    dim['units'] = self.hdr['units'][0]
+                else:
+                    dim['labels'] = [ {'name': x, 'units': y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
 
             # import other dimension names
             dims = []
@@ -185,7 +184,7 @@ class Importer:
                     colHdr[1] = ch
                     key = self.name+'|'+'|'.join([ x[1] for x in dims ])
                     key = key.replace(' ','_')
-                    self.db.set(key, cd)
+                    self.db.set(key, cd.strip())
 
             # add lookup data
             self.db.select(self.dbNum)
