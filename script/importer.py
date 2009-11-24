@@ -110,41 +110,62 @@ class Importer:
             self.db.select(self.dbNum+1)
             self.db.sadd('datasets', self.hdr['name'])
 
-            # TODO load exiting meta struct if it exists
-            # if it exists, then we dimension labels should add to existing sets
+
+            # load meta struct if it exists
+            if self.db.exists(self.name):
+                meta = json.loads(self.db.get(self.name))
+            else:
+                meta = {}
+                meta['dims'] = []
 
             # pack metadata into struct
-            meta = {}
             meta['descr'] = self.hdr['descr']
-            meta['dims'] = []
 
-            # add row dimension
-            dim = {}
-            dim['name'] = self.hdr['rowLabel']
-            dim['labels'] = [ {'name': x} for x in self.hdr['rows'] ]
-            meta['dims'].append(dim)
+            # add or update row dimension
+            dim = filter(lambda x: x['name'] == self.hdr['rowLabel'], meta['dims'])
+            if len(dim) == 0:
+                dim = {'name': self.hdr['rowLabel']}
+                dim['labels'] = []
+                meta['dims'].append(dim)
+            else:
+                dim = dim[0]
+            labelNames = [ x['name'] for x in dim['labels'] ]
+            for ll in self.hdr['rows']:
+                if ll not in labelNames:
+                    dim['labels'].append({'name': ll})
 
             # add col dimension (one for each if categories)
-            dim = {}
-            dim['name'] = self.hdr['colLabel']
-            dim['labels'] = [ {'name': x} for x in self.hdr['cols'] ]
-            if (len(self.hdr['units'])==1):
-                dim['labels'] = [ {'name': x} for x in self.hdr['cols'] ]
-                dim['units'] = self.hdr['units'][0]
+            dim = filter(lambda x: x['name'] == self.hdr['colLabel'], meta['dims'])
+            if len(dim) == 0:
+                dim = {'name': self.hdr['colLabel']}
+                dim['labels'] = []
+                meta['dims'].append(dim)
             else:
-                dim['labels'] = [ {'name': x, 'units': y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
+                dim = dim[0]
+
             dim['url'] = self.hdr['url']
             dim['license'] = self.hdr['license']
             dim['source'] = self.hdr['source']
             dim['publishDate'] = self.hdr['publishDate']
             dim['default'] = self.hdr['default']
-            meta['dims'].append(dim)
+
+            for ll in self.hdr['rows']:
+                if ll not in labelNames:
+                    if (len(self.hdr['units'])==1):
+                        dim['labels'] = [ {'name': x} for x in self.hdr['cols'] ]
+                        dim['units'] = self.hdr['units'][0]
+                    else:
+                        dim['labels'] = [ {'name': x, 'units': y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
 
             # import other dimension names
             dims = []
             for name,value in self.hdr['otherDim']:
-                meta['dims'].append({'name': name, 'labels': value})
                 dims.append([name,value])
+                dim = filter(lambda x: x['name'] == name, meta['dims'])
+                if len(dim) == 0:
+                    meta['dims'].append({'name': name, 'labels': [value]})
+                else:
+                    dim[0]['labels'].append(value)
 
             # sort dimensions by name
             meta['dims'].sort(key=lambda x: x['name'])
@@ -253,3 +274,4 @@ if __name__ == '__main__':
 
     except Exception,ex:
         print 'FAIL: ' + str(ex)
+        print traceback.print_exc()

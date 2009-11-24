@@ -1,5 +1,5 @@
 name, Oil
-descr, "Info about oil, 1998"
+descr, "Info about oil"
 source, Oil Companies
 url, "http://www.oil.com/data.csv"
 license, Public Domain
@@ -9,7 +9,7 @@ default, "Year"
 otherDim, Year, 1998
 rowLabel,"State"
 colLabel,Category
-cols, Production, Consumption, Consumption|Motor, Consumption|Heat, Consumption|Kill
+cols, Production, Consumption, Consumption`Motor, Consumption`Heat, Consumption`Kill
 
 Total,		              2.50679740e+03, 2.98690565e+03, 1.82238621e+03, 6.46345943e+02, 9.36080440e+02
 Northeast,		      6.88700500e+01, 8.23843395e+01, 5.00027281e+01, 1.64634198e+01, 2.58383591e+01
