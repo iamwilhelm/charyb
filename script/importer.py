@@ -120,6 +120,7 @@ class Importer:
 
             # pack metadata into struct
             meta['descr'] = self.hdr['descr']
+            meta['default'] = self.hdr['default']
 
             # add or update row dimension
             dim = filter(lambda x: x['name'] == self.hdr['rowLabel'], meta['dims'])
@@ -146,7 +147,6 @@ class Importer:
             dim['license'] = self.hdr['license']
             dim['source'] = self.hdr['source']
             dim['publishDate'] = self.hdr['publishDate']
-            dim['default'] = self.hdr['default']
 
             labelNames = [ x['name'] for x in dim['labels'] ]
             for ll in set(self.hdr['cols']).difference(labelNames):
