@@ -190,7 +190,7 @@ class Importer:
             # add lookup data
             self.db.select(self.dbNum)
             for ss in self._getSearchTerms(meta['dims']):
-                self.db.sadd(_under(ss), self.hdr['name'])
+                self.db.sadd(_under(ss).lower(), self.hdr['name'])
                 
         except Exception, ex:
             print 'FAIL: ' + str(ex)
