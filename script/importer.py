@@ -99,7 +99,7 @@ class Importer:
 
     def _getSearchTerms(self, dims):
         # get a list of search terms given a list of dimensions or labels of a category
-        ret = [ self.hdr['name'] ]
+        ret = []
         for dd in dims:
             if dd['name'] == 'Category':
                 ret += dd['labels']
@@ -184,7 +184,7 @@ class Importer:
             # add lookup data
             self.db.select(self.searchDbNum)
             for ss in self._getSearchTerms(meta['dims']):
-                self.db.sadd(_under(ss).lower(), self.hdr['name'])
+                self.db.sadd(_under(self.hdr['name']+'|'+ss).lower(), self.hdr['name'])
                 
         except Exception, ex:
             print 'FAIL: ' + str(ex)
