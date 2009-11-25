@@ -130,7 +130,7 @@ class Importer:
             if self.db.exists(self.name):
                 meta = json.loads(self.db.get(self.name))
             else:
-                meta = { 'dims': {} }
+                meta = { 'dims': {}, 'sources': {}, 'units': {} }
 
             # add or update row and col labels
             self._updateDimLabels(meta, self.hdr['rowLabel'], self.hdr['rows'])
@@ -152,14 +152,14 @@ class Importer:
             meta['descr'] = self.hdr['descr']
             meta['default'] = self.hdr['default']
             metaKey = 'default' if len(self.hdr['otherDim'])==0 else '|'.join([ x['val'] for x in dims ])
-            meta['sources'] = {metaKey: {'url': self.hdr['url'],
+            meta['sources'][metaKey] = {'url': self.hdr['url'],
                                         'license': self.hdr['license'], 
                                         'source': self.hdr['source'], 
-                                        'publishDate': self.hdr['publishDate']}}
+                                        'publishDate': self.hdr['publishDate']}
             if (len(self.hdr['units'])==1):
-                meta['units'] = {'default': self.hdr['units'][0]}
+                meta['units']['default'] = self.hdr['units'][0]
             else:
-                meta['units'] = dict(zip(self.hdr['cols'],self.hdr['units']))
+                meta['units'].update(dict(zip(self.hdr['cols'],self.hdr['units'])))
 
             # store metadata as json string
             metaStr = json.dumps(meta)
