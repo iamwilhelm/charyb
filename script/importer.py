@@ -18,8 +18,9 @@ class Importer:
         self.hdr = {}
         self.data = None
         self.name = None
-        self.dbNum = dbNum
-        self.db = redis.Redis(db=dbNum+1)
+        self.searchDbNum = dbNum
+        self.dataDbNum = dbNum+1
+        self.db = redis.Redis(db=self.dataDbNum)
 
     def _openFile(self):
         # check that file exists, open it.  if not file, read from stdin
@@ -61,7 +62,7 @@ class Importer:
 
     def _remove(self):
         # remove the table whos header is loaded
-        self.db.select(self.dbNum+1)
+        self.db.select(self.dataDbNum)
         if self.db.sismember('datasets', self.hdr['name']):
             print 'removing: ' + self.hdr['name']
             meta = json.loads(self.db.get(self.name))
@@ -76,7 +77,7 @@ class Importer:
                 self.db.delete(kk)
 
             # remove search terms
-            self.db.select(self.dbNum)
+            self.db.select(self.searchDbNum)
             for ss in self._getSearchTerms(meta['dims']):
                 self.db.srem(_under(ss), self.hdr['name'])
                 if self.db.scard(_under(ss))==0:
@@ -107,9 +108,8 @@ class Importer:
         try:
             self._readData()
 
-            self.db.select(self.dbNum+1)
+            self.db.select(self.dataDbNum)
             self.db.sadd('datasets', self.hdr['name'])
-
 
             # load meta struct if it exists
             if self.db.exists(self.name):
@@ -187,7 +187,7 @@ class Importer:
                     self.db.set(key, cd.strip())
 
             # add lookup data
-            self.db.select(self.dbNum)
+            self.db.select(self.dataDbNum)
             for ss in self._getSearchTerms(meta['dims']):
                 self.db.sadd(_under(ss).lower(), self.hdr['name'])
                 
