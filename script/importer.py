@@ -130,7 +130,7 @@ class Importer:
             if self.db.exists(self.name):
                 meta = json.loads(self.db.get(self.name))
             else:
-                meta = { 'dims': {}, 'sources': {}, 'units': {} }
+                meta = { 'dims': {}, 'otherDims': [], 'sources': {}, 'units': {} }
 
             # add or update row and col labels
             self._updateDimLabels(meta, self.hdr['rowLabel'], self.hdr['rows'])
@@ -139,6 +139,8 @@ class Importer:
             # import other dimension names
             dims = []
             for name,value in self.hdr['otherDim']:
+                if name not in meta['otherDims']:
+                    meta['otherDims'] += [name]
                 dims.append({'name': name, 'val': value})
                 if name in meta['dims']:
                     if value not in meta['dims'][name]:
