@@ -2,7 +2,7 @@
 
 # imports a table into the db
 
-import os, os.path, sys, traceback, csv, json
+import os, os.path, sys, traceback, csv, json, operator
 sys.path.append('redis')
 import redis
 
@@ -123,10 +123,8 @@ class Importer:
         try:
             self._readData()
 
-            self.db.select(self.dataDbNum)
-            self.db.sadd('datasets', self.hdr['name'])
-
             # load meta struct if it exists
+            self.db.select(self.dataDbNum)
             if self.db.exists(self.name):
                 meta = json.loads(self.db.get(self.name))
             else:
@@ -136,25 +134,19 @@ class Importer:
             self._updateDimLabels(meta, self.hdr['rowLabel'], self.hdr['rows'])
             self._updateDimLabels(meta, self.hdr['colLabel'], self.hdr['cols'])
 
-            # import other dimension names
-            dims = []
+            # import other dimension names, populate otherDims list
+            meta['otherDims'] = list(set(meta['otherDims']).union( map(operator.itemgetter(0), self.hdr['otherDims']) ))
             for name,value in self.hdr['otherDims']:
-                if name not in meta['otherDims']:
-                    meta['otherDims'] += [name]
-                dims.append({'name': name, 'val': value})
-                if name in meta['dims']:
-                    if value not in meta['dims'][name]:
-                        meta['dims'][name] += [value]
+                if (name in meta['dims']):
+                    meta['dims'][name] = list(set(meta['dims'][name]).union(value))
                 else:
-                    meta['dims'][name] = [value]
-
-            # sort dimensions by name
-            dims.sort(key=lambda x: x['name'])
+                    meta['dims'][name] = [ value ]
+            otherDims = sorted(self.hdr['otherDims'])
 
             # pack metadata into struct
             meta['descr'] = self.hdr['descr']
             meta['default'] = self.hdr['default']
-            metaKey = 'default' if len(self.hdr['otherDims'])==0 else '|'.join([ x['val'] for x in dims ])
+            metaKey = 'default' if len(self.hdr['otherDims'])==0 else '|'.join( map(operator.itemgetter(1), otherDims) )
             meta['sources'][metaKey] = {'url': self.hdr['url'],
                                         'license': self.hdr['license'], 
                                         'source': self.hdr['source'], 
@@ -169,16 +161,18 @@ class Importer:
             self.db.set(self.name, metaStr)
 
             # add the data to the db
-            rowHdr = {'name': self.hdr['rowLabel'], 'val': ''}
-            colHdr = {'name': self.hdr['colLabel'], 'val': ''}
-            dims += [rowHdr, colHdr]
-            dims.sort(key=lambda x: x['name'])
+            dims = {self.hdr['rowLabel']: '', self.hdr['colLabel']: ''}
+            dims.update(otherDims)
+
             for rh,rd in zip(self.hdr['rows'],self.data):
-                rowHdr['val'] = rh
+                dims[self.hdr['rowLabel']] = rh
                 for ch,cd in zip(self.hdr['cols'],rd):
-                    colHdr['val'] = ch
-                    key = _under(self.name+'|'+'|'.join([ x['val'] for x in dims ]))
+                    dims[self.hdr['colLabel']] = ch
+                    key = _under(self.name+'|'+'|'.join( map(operator.itemgetter(1), sorted(dims.items())) ))
                     self.db.set(key, _getNumber(cd))
+
+            # add dataset name
+            self.db.sadd('datasets', self.hdr['name'])
 
             # add lookup data
             self.db.select(self.searchDbNum)
@@ -191,6 +185,15 @@ class Importer:
             print traceback.print_exc()
             print 'import failed, cleaning up'
             self._remove()
+
+    def _postprocess(self):
+        # make sure all dimensions have total columns
+        self.db.select(self.dataDbNum)
+        meta = json.loads(self.db.get(self.name))
+        for dd in meta['dims']:
+            if 'Total' not in meta['dims'][dd] and len(meta['units'])==1 and dd!='Category':
+                print 'needs total: ' + dd
+        
 
     def removeTable(self):
         # import a new table into the db
@@ -206,6 +209,7 @@ class Importer:
         if len(self.hdr['otherDims'])==0:
             self._remove()
         self._importData()
+        self._postprocess()
         self.fin.close()
 
 def printHelp():
