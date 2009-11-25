@@ -8,8 +8,14 @@ import redis
 
 VERSION = '0.1.0'
 
-def _under(str):
-    return str.replace(' ','_')
+def _under(strIn):
+    return strIn.replace(' ','_')
+
+def _getNumber(strIn):
+    try:
+        return str(float(strIn))
+    except:
+        return 'NaN'
 
 class Importer:
     def __init__(self, fn, dbNum):
@@ -102,7 +108,7 @@ class Importer:
         return ret
 
     def _updateDimLabels(self, meta, dimName, newDimLabels):
-        # fill in new labels to dimension
+        # create or expand dimension labels list
         dim = filter(lambda x: x['name'] == dimName, meta['dims'])
         if len(dim) == 0:
             dim = {'name': dimName, 'labels': []}
@@ -157,7 +163,7 @@ class Importer:
             if (len(self.hdr['units'])==1):
                 meta['units'] = {'default': self.hdr['units'][0]}
             else:
-                meta['units'] = [ {x: y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
+                meta['units'] = dict(zip(self.hdr['cols'],self.hdr['units']))
 
             # store metadata as json string
             metaStr = json.dumps(meta)
@@ -172,9 +178,8 @@ class Importer:
                 rowHdr['val'] = rh
                 for ch,cd in zip(self.hdr['cols'],rd):
                     colHdr['val'] = ch
-                    key = self.name+'|'+'|'.join([ x['val'] for x in dims ])
-                    key = key.replace(' ','_')
-                    self.db.set(key, cd.strip())
+                    key = _under(self.name+'|'+'|'.join([ x['val'] for x in dims ]))
+                    self.db.set(key, _getNumber(cd))
 
             # add lookup data
             self.db.select(self.searchDbNum)
