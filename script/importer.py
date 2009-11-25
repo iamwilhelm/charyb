@@ -66,6 +66,16 @@ class Importer:
 
         self.name = _under(self.hdr['name'])
 
+    def _getSearchTerms(self, dims):
+        # get a list of search terms given a dict of 
+        ret = []
+        for kk in dims:
+            if kk == 'Category':
+                ret += dims[kk]
+            elif kk not in ['State', 'Year', 'Country']:
+                ret.append(kk)
+        return ret
+
     def _remove(self):
         # remove the table whos header is loaded
         self.db.select(self.dataDbNum)
@@ -97,25 +107,14 @@ class Importer:
             self.hdr['rows'].append(fields[0])
             self.data.append(fields[1:])
 
-    def _getSearchTerms(self, dims):
-        # get a list of search terms given a list of dimensions or labels of a category
-        ret = []
-        for dd in dims:
-            if dd['name'] == 'Category':
-                ret += dd['labels']
-            elif dd['name'] not in ['State', 'Year', 'Country']:
-                ret.append(dd['name'])
-        return ret
-
     def _updateDimLabels(self, meta, dimName, newDimLabels):
         # create or expand dimension labels list
-        dim = filter(lambda x: x['name'] == dimName, meta['dims'])
-        if len(dim) == 0:
-            dim = {'name': dimName, 'labels': []}
-            meta['dims'].append(dim)
+        if dimName in meta['dims']:
+            dimLabels = meta['dims'][dimName]
         else:
-            dim = dim[0]
-        dim['labels'] += set(newDimLabels).difference(dim['labels'])
+            dimLabels = []
+            meta['dims'][dimName] = dimLabels
+        dimLabels += set(newDimLabels).difference(dimLabels)
 
     def _importData(self):
         # finish reading the input file, saving the row names and saving the data to the db
@@ -131,8 +130,7 @@ class Importer:
             if self.db.exists(self.name):
                 meta = json.loads(self.db.get(self.name))
             else:
-                meta = {}
-                meta['dims'] = []
+                meta = { 'dims': {} }
 
             # add or update row and col labels
             self._updateDimLabels(meta, self.hdr['rowLabel'], self.hdr['rows'])
@@ -142,14 +140,12 @@ class Importer:
             dims = []
             for name,value in self.hdr['otherDim']:
                 dims.append({'name': name, 'val': value})
-                dim = filter(lambda x: x['name'] == name, meta['dims'])
-                if len(dim) == 0:
-                    meta['dims'].append({'name': name, 'labels': [value]})
+                if name in meta['dims']:
+                    meta['dims'][name] += [value]
                 else:
-                    dim[0]['labels'].append(value)
+                    meta['dims'][name] = [value]
 
             # sort dimensions by name
-            meta['dims'].sort(key=lambda x: x['name'])
             dims.sort(key=lambda x: x['name'])
 
             # pack metadata into struct
@@ -183,6 +179,7 @@ class Importer:
 
             # add lookup data
             self.db.select(self.searchDbNum)
+            self.db.sadd(_under(self.hdr['name']).lower(), '_')
             for ss in self._getSearchTerms(meta['dims']):
                 self.db.sadd(_under(self.hdr['name']+'|'+ss).lower(), self.hdr['name'])
                 
