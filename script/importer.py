@@ -96,10 +96,20 @@ class Importer:
         ret = [ self.hdr['name'] ]
         for dd in dims:
             if dd['name'] == 'Category':
-                ret += self._getSearchTerms(dd['labels'])
+                ret += dd['labels']
             elif dd['name'] not in ['State', 'Year', 'Country']:
                 ret.append(dd['name'])
         return ret
+
+    def _updateDimLabels(self, meta, dimName, newDimLabels):
+        # fill in new labels to dimension
+        dim = filter(lambda x: x['name'] == dimName, meta['dims'])
+        if len(dim) == 0:
+            dim = {'name': dimName, 'labels': []}
+            meta['dims'].append(dim)
+        else:
+            dim = dim[0]
+        dim['labels'] += set(newDimLabels).difference(dim['labels'])
 
     def _importData(self):
         # finish reading the input file, saving the row names and saving the data to the db
@@ -118,48 +128,14 @@ class Importer:
                 meta = {}
                 meta['dims'] = []
 
-            # pack metadata into struct
-            meta['descr'] = self.hdr['descr']
-            meta['default'] = self.hdr['default']
-
-            # add or update row dimension
-            dim = filter(lambda x: x['name'] == self.hdr['rowLabel'], meta['dims'])
-            if len(dim) == 0:
-                dim = {'name': self.hdr['rowLabel']}
-                dim['labels'] = []
-                meta['dims'].append(dim)
-            else:
-                dim = dim[0]
-            labelNames = [ x['name'] for x in dim['labels'] ]
-            for ll in set(self.hdr['rows']).difference(labelNames):
-                dim['labels'].append({'name': ll})
-
-            # add col dimension (one for each if categories)
-            dim = filter(lambda x: x['name'] == self.hdr['colLabel'], meta['dims'])
-            if len(dim) == 0:
-                dim = {'name': self.hdr['colLabel']}
-                dim['labels'] = []
-                meta['dims'].append(dim)
-            else:
-                dim = dim[0]
-
-            dim['url'] = self.hdr['url']
-            dim['license'] = self.hdr['license']
-            dim['source'] = self.hdr['source']
-            dim['publishDate'] = self.hdr['publishDate']
-
-            labelNames = [ x['name'] for x in dim['labels'] ]
-            for ll in set(self.hdr['cols']).difference(labelNames):
-                if (len(self.hdr['units'])==1):
-                    dim['labels'] = [ {'name': x} for x in self.hdr['cols'] ]
-                    dim['units'] = self.hdr['units'][0]
-                else:
-                    dim['labels'] = [ {'name': x, 'units': y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
+            # add or update row and col labels
+            self._updateDimLabels(meta, self.hdr['rowLabel'], self.hdr['rows'])
+            self._updateDimLabels(meta, self.hdr['colLabel'], self.hdr['cols'])
 
             # import other dimension names
             dims = []
             for name,value in self.hdr['otherDim']:
-                dims.append([name,value])
+                dims.append({'name': name, 'val': value})
                 dim = filter(lambda x: x['name'] == name, meta['dims'])
                 if len(dim) == 0:
                     meta['dims'].append({'name': name, 'labels': [value]})
@@ -168,26 +144,40 @@ class Importer:
 
             # sort dimensions by name
             meta['dims'].sort(key=lambda x: x['name'])
+            dims.sort(key=lambda x: x['name'])
+
+            # pack metadata into struct
+            meta['descr'] = self.hdr['descr']
+            meta['default'] = self.hdr['default']
+            metaKey = 'default' if len(self.hdr['otherDim'])==0 else '|'.join([ x['val'] for x in dims ])
+            meta['sources'] = {metaKey: {'url': self.hdr['url'],
+                                        'license': self.hdr['license'], 
+                                        'source': self.hdr['source'], 
+                                        'publishDate': self.hdr['publishDate']}}
+            if (len(self.hdr['units'])==1):
+                meta['units'] = {'default': self.hdr['units'][0]}
+            else:
+                meta['units'] = [ {x: y} for x,y in zip(self.hdr['cols'],self.hdr['units']) ]
 
             # store metadata as json string
             metaStr = json.dumps(meta)
             self.db.set(self.name, metaStr)
 
             # add the data to the db
-            rowHdr = [self.hdr['rowLabel'], '']
-            colHdr = [self.hdr['colLabel'], '']
+            rowHdr = {'name': self.hdr['rowLabel'], 'val': ''}
+            colHdr = {'name': self.hdr['colLabel'], 'val': ''}
             dims += [rowHdr, colHdr]
-            dims.sort()
+            dims.sort(key=lambda x: x['name'])
             for rh,rd in zip(self.hdr['rows'],self.data):
-                rowHdr[1] = rh
+                rowHdr['val'] = rh
                 for ch,cd in zip(self.hdr['cols'],rd):
-                    colHdr[1] = ch
-                    key = self.name+'|'+'|'.join([ x[1] for x in dims ])
+                    colHdr['val'] = ch
+                    key = self.name+'|'+'|'.join([ x['val'] for x in dims ])
                     key = key.replace(' ','_')
                     self.db.set(key, cd.strip())
 
             # add lookup data
-            self.db.select(self.dataDbNum)
+            self.db.select(self.searchDbNum)
             for ss in self._getSearchTerms(meta['dims']):
                 self.db.sadd(_under(ss).lower(), self.hdr['name'])
                 
