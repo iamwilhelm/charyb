@@ -41,13 +41,13 @@ class Importer:
 
     def _readHeader(self):
         # read header from file
-        self.hdr['otherDim'] = []
+        self.hdr['otherDims'] = []
 
         for fields in self.csvIn:
             if len(fields) == 0:
                 break
             key = fields[0].strip()
-            if key == 'otherDim':
+            if key == 'otherDims':
                 self.hdr[key].append([ x.strip() for x in fields[1:] ])
             elif len(fields)>2:
                 self.hdr[key] = [ x.strip() for x in fields[1:] ]
@@ -138,7 +138,7 @@ class Importer:
 
             # import other dimension names
             dims = []
-            for name,value in self.hdr['otherDim']:
+            for name,value in self.hdr['otherDims']:
                 if name not in meta['otherDims']:
                     meta['otherDims'] += [name]
                 dims.append({'name': name, 'val': value})
@@ -154,7 +154,7 @@ class Importer:
             # pack metadata into struct
             meta['descr'] = self.hdr['descr']
             meta['default'] = self.hdr['default']
-            metaKey = 'default' if len(self.hdr['otherDim'])==0 else '|'.join([ x['val'] for x in dims ])
+            metaKey = 'default' if len(self.hdr['otherDims'])==0 else '|'.join([ x['val'] for x in dims ])
             meta['sources'][metaKey] = {'url': self.hdr['url'],
                                         'license': self.hdr['license'], 
                                         'source': self.hdr['source'], 
@@ -203,7 +203,7 @@ class Importer:
         # import a table into the db.  if its already there, remove it first
         self._openFile()
         self._readHeader()
-        if len(self.hdr['otherDim'])==0:
+        if len(self.hdr['otherDims'])==0:
             self._remove()
         self._importData()
         self.fin.close()
