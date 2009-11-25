@@ -1,12 +1,12 @@
 name, Oil
 descr, "Info about oil"
-source, Oil Companies
-url, "http://www.oil.com/data.csv"
+source, fake
+url, "http://www.graphbug.com/fakedata_oil_2000.csv"
 license, Public Domain
 publishDate, 2000
 units, Barrels
 default, "Year"
-otherDim, Year,2000
+otherDims, Year,2000
 rowLabel,"State"
 colLabel,Category
 cols, Production, Consumption, Consumption`Motor, Consumption`Heat, Consumption`Kill

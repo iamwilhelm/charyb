@@ -1,7 +1,7 @@
 name, Peanut Butter
 descr, "Uses of Peanut Butter"
-source, Jiffy
-url, "http://www.jiffy.org/peanut_butter.csv"
+source, fake
+url, "http://www.graphbug.com/fakedata_pb.csv"
 license, "Public Domain"
 publishDate, 2009
 units, Tons, Gallons, Tons, Gallons, Tons, Tons

@@ -1,7 +1,7 @@
-name, Banks
-descr, "Number of Banks"
-source, The Fed
-url, "http://www.banks.gov/data.csv"
+name, Number of Banks
+descr, "Total Number of Banks by year"
+source, fake
+url, "http://www.graphbug.com/fakedata_banks.csv"
 license, Public Domain
 publishDate, 1980
 units, Buildings
