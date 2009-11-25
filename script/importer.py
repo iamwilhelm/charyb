@@ -141,7 +141,8 @@ class Importer:
             for name,value in self.hdr['otherDim']:
                 dims.append({'name': name, 'val': value})
                 if name in meta['dims']:
-                    meta['dims'][name] += [value]
+                    if value not in meta['dims'][name]:
+                        meta['dims'][name] += [value]
                 else:
                     meta['dims'][name] = [value]
 
