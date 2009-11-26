@@ -1,3 +1,5 @@
+require 'csv_to_table'
+
 module Source
 
   # A datasource that's a CSV file that needs to be parsed 
@@ -17,11 +19,11 @@ module Source
     # if reload is true, then we load it again.  if false, we use the memoized copy
     # stored in an attribute
     def document(reload = false)
-      @doc = response_body
+      @doc = Charyb.csv_to_table(response_body)
     end
 
     def display
-      @doc.split("\n")[0..9] << "Only showing the first 10 rows"
+      @doc
     end
 
     # retrieve and extract data from the datasource and yield rows as a hash
