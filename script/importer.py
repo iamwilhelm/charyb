@@ -3,7 +3,8 @@
 # imports a table into the db
 
 import os, os.path, sys, traceback, csv, json, operator
-sys.path.append('redis')
+sys.path.append('redis')                # for running from local dir
+sys.path.append('script/redis')         # for running from charyb dir
 import redis
 
 VERSION = '0.1.0'

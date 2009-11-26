@@ -20,12 +20,13 @@ module Charyb
         pipe.write("descr, \"" + imported_table.descr + "\"\n")
         pipe.write("source, \"" + datasource.title + "\"\n")
         pipe.write("url, \"" + datasource.url + "\"\n")
-        pipe.write("date, \"" + imported_table.published_at.to_s() + "\"\n")
+        pipe.write("license, Unknown\n")
+        pipe.write("publishDate, \"" + imported_table.published_at.to_s() + "\"\n")
         pipe.write("units, \"" + imported_table.units + "\"\n")
 
         otherdims = imported_table.other_dims.split(",")
         while not otherdims.empty?
-          pipe.write("otherdim, " + otherdims.shift + "," + otherdims.shift + "\n")
+          pipe.write("otherDims, " + otherdims.shift + "," + otherdims.shift + "\n")
         end
 
         pipe.write("default, \"" + imported_table.default_dim + "\"\n")
