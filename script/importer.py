@@ -138,7 +138,7 @@ class Importer:
             meta['otherDims'] = list(set(meta['otherDims']).union( map(operator.itemgetter(0), self.hdr['otherDims']) ))
             for name,value in self.hdr['otherDims']:
                 if (name in meta['dims']):
-                    meta['dims'][name] = list(set(meta['dims'][name]).union(value))
+                    meta['dims'][name] = list(set(meta['dims'][name]).union([value]))
                 else:
                     meta['dims'][name] = [ value ]
             otherDims = sorted(self.hdr['otherDims'])
@@ -188,12 +188,14 @@ class Importer:
 
     def _postprocess(self):
         # make sure all dimensions have total columns
+        # unless they have cols with differing units or hierarchies
         self.db.select(self.dataDbNum)
         meta = json.loads(self.db.get(self.name))
         for dd in meta['dims']:
-            if 'Total' not in meta['dims'][dd] and len(meta['units'])==1 and dd!='Category':
+            if len(meta['units'])==1 and all('`' not in x for x in meta['dims'][dd]):
                 print 'needs total: ' + dd
-        
+                meta['dims'][dd] = list(set(meta['dims'][dd]).union(['Total']))
+                
 
     def removeTable(self):
         # import a new table into the db
@@ -209,7 +211,7 @@ class Importer:
         if len(self.hdr['otherDims'])==0:
             self._remove()
         self._importData()
-        self._postprocess()
+        #self._postprocess()
         self.fin.close()
 
 def printHelp():
