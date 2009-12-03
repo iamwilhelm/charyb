@@ -37,7 +37,7 @@ module Charyb
 
         # write data
         numCols = col_labels.length
-        data = data.split("\n").map{|s|quote(s)};
+        data = data.split("\n").map{|s|quote(s.gsub(",",""))};
         row_labels = imported_table.row_labels_content.map{|s|quote(s)};
         (0...row_labels.length).each do |rr|
           pipe.write(row_labels[rr] + ", " + data[rr * numCols, numCols].join(",") + "\n")
