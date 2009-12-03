@@ -5,9 +5,9 @@
 import os, os.path, sys, traceback, csv, json, operator
 sys.path.append('redis')                # for running from local dir
 sys.path.append('script/redis')         # for running from charyb dir
-import redis
+import redis, updatetotals
 
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 
 def _under(strIn):
     return strIn.replace(' ','_')
@@ -191,11 +191,7 @@ class Importer:
         # make sure all dimensions have total columns
         # unless they have cols with differing units or hierarchies
         self.db.select(self.dataDbNum)
-        meta = json.loads(self.db.get(self.name))
-        for dd in meta['dims']:
-            if len(meta['units'])==1 and all('`' not in x for x in meta['dims'][dd]):
-                print 'needs total: ' + dd
-                meta['dims'][dd] = list(set(meta['dims'][dd]).union(['Total']))
+        updatetotals.updateTotals(self.db, self.name)
                 
 
     def removeTable(self):
@@ -212,7 +208,7 @@ class Importer:
         if len(self.hdr['otherDims'])==0:
             self._remove()
         self._importData()
-        #self._postprocess()
+        self._postprocess()
         self.fin.close()
 
 def printHelp():
