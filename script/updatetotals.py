@@ -11,9 +11,9 @@ import redis
 
 VERSION = '0.0.1'
 
-def _under(strIn):
-    ''' add underscores to a string '''
-    return strIn.replace(' ','_')
+def _toKey(strIn):
+    ''' lowercase and underscore a string '''
+    return strIn.replace(' ','_').lower()
 
 def _applyPattern(dimLabels, flag):
     ''' set dimension labels according to pattern flags '''
@@ -87,9 +87,9 @@ def updateTotals(dw, dataSet):
         for pr in params:
             # lhs is the name of the redis key being set
             lhs = [ ['Total'] if len(x)>1 else x for x in pr ]
-            lhs = _under(dataSet+'|' + '|'.join([ x[0] for x in lhs ]))
+            lhs = _toKey(dataSet+'|' + '|'.join([ x[0] for x in lhs ]))
             # rhs is a list of redis keys being summed
-            rhs = [ dataSet+'|' + '|'.join(map(_under, pp)) for pp in itertools.product(*pr) ]
+            rhs = [ dataSet+'|' + '|'.join(map(_toKey, pp)) for pp in itertools.product(*pr) ]
             try:
                 total = reduce(operator.add, [ float(x) for x in dw.mget(*rhs) ] )
             except:

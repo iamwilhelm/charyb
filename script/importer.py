@@ -7,10 +7,11 @@ sys.path.append('redis')                # for running from local dir
 sys.path.append('script/redis')         # for running from charyb dir
 import redis, updatetotals
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
-def _under(strIn):
-    return strIn.replace(' ','_')
+def _toKey(strIn):
+    ''' lowercase and underscore a string '''
+    return strIn.replace(' ','_').lower()
 
 def _getNumber(strIn):
     try:
@@ -65,7 +66,7 @@ class Importer:
             if not ff in self.hdr:
                 raise Exception('header must contain an entry for ' + ff)
 
-        self.name = _under(self.hdr['name'])
+        self.name = _toKey(self.hdr['name'])
 
     def _getSearchTerms(self, dims):
         # get a list of search terms given a dict of 
@@ -96,9 +97,9 @@ class Importer:
             # remove search terms
             self.db.select(self.searchDbNum)
             for ss in self._getSearchTerms(meta['dims']):
-                self.db.srem(_under(ss), self.hdr['name'])
-                if self.db.scard(_under(ss))==0:
-                    self.db.delete(_under(ss))
+                self.db.srem(_toKey(ss), self.hdr['name'])
+                if self.db.scard(_toKey(ss))==0:
+                    self.db.delete(_toKey(ss))
 
     def _readData(self):
         # read row labels and data
@@ -169,7 +170,7 @@ class Importer:
                 dims[self.hdr['rowLabel']] = rh
                 for ch,cd in zip(self.hdr['cols'],rd):
                     dims[self.hdr['colLabel']] = ch
-                    key = _under(self.name+'|'+'|'.join( map(operator.itemgetter(1), sorted(dims.items())) ))
+                    key = _toKey(self.name+'|'+'|'.join( map(operator.itemgetter(1), sorted(dims.items())) ))
                     self.db.set(key, _getNumber(cd))
 
             # add dataset name
@@ -177,9 +178,9 @@ class Importer:
 
             # add lookup data
             self.db.select(self.searchDbNum)
-            self.db.sadd(_under(self.hdr['name']).lower(), '_')
+            self.db.sadd(_toKey(self.hdr['name']), '_')
             for ss in self._getSearchTerms(meta['dims']):
-                self.db.sadd(_under(self.hdr['name']+'|'+ss).lower(), self.hdr['name'])
+                self.db.sadd(_toKey(self.hdr['name']+'|'+ss), self.hdr['name'])
                 
         except Exception, ex:
             print 'FAIL: ' + str(ex)
