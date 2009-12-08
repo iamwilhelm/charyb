@@ -106,14 +106,14 @@ function update(className) {
 }
 
 function lookupLogicalCorners(cell) {
-    top = cell.parentNode.rowIndex;
-    left = cell.cellIndex;
+    var top = cell.parentNode.rowIndex;
+    var left = cell.cellIndex;
     while (logicalTable[top].length > left
 	   && (logicalTable[top][left][0] != cell.parentNode.rowIndex
 	       || logicalTable[top][left][1] != cell.cellIndex))
 	left++;
-    bottom = (isNaN(cell.rowSpan)) ? top : top+cell.rowSpan - 1;
-    right = (isNaN(cell.colSpan)) ? left : left+cell.colSpan - 1;
+    var bottom = (isNaN(cell.rowSpan)) ? top : top + cell.rowSpan - 1;
+    var right = (isNaN(cell.colSpan)) ? left : left + cell.colSpan - 1;
     return { top: top,
 	     left: left,
 	     bottom: bottom,
@@ -165,12 +165,12 @@ function computeLogicalTable() {
 	var aCol = this.cellIndex;	     // actual col
 	var lRow = aRow; // logical row (in table)
 	var lCol = aCol;  // logical col
-	while (logicalTable[lRow][lCol][0]!=-1)
+	while (logicalTable[lRow][lCol][0] != -1)
 	    lCol++;
-	var rowSpan = (this.rowSpan>1) ? this.rowSpan : 1;
-	var colSpan = (this.colSpan>1) ? this.colSpan : 1;
-	for (rr = lRow; rr < lRow + rowSpan; rr++) {
-	    for (cc = lCol; cc < lCol + colSpan; cc++) {
+	var rowSpan = (this.rowSpan > 1) ? this.rowSpan : 1;
+	var colSpan = (this.colSpan > 1) ? this.colSpan : 1;
+	for (rr = lRow; rr < (lRow + rowSpan); rr++) {
+	    for (cc = lCol; cc < (lCol + colSpan); cc++) {
 		logicalTable[rr][cc][0] = aRow;
                 logicalTable[rr][cc][1] = aCol;
 	    }
