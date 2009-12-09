@@ -6,6 +6,10 @@ $(document).ready(function() {
     $("#remote_page table").mousedown(click);
 });
 
+/*
+ * set a field to the currently selected cells. color table, set values in textarea, set xpaths
+ * fieldName is colLabels, rowLabels or data
+ */
 function setButton(fieldName) {
     if (one == null || two == null) {
 	alert("Select region first");
@@ -28,6 +32,9 @@ function setButton(fieldName) {
     $("#table_info input[name=imported_table[" + fieldName + "_two]]").val(getXPath(two));
 }
 
+/* 
+ * color the three sections of the table using xpaths from the form
+ */
 function colorTable() {
     colorSection($("#table_info input[name=imported_table[col_labels_one]]").val(), 
 		 $("#table_info input[name=imported_table[col_labels_two]]").val(), "col_labels", true);
@@ -41,6 +48,9 @@ function colorTable() {
     $("#table_info textarea[name=data_content]").html(value.join("\n"));
 }
 
+/*
+ * color a single section given its bounding xpaths
+ */
 function colorSection(xPathOne, xPathTwo, fieldName, findTbl) {
     var remote = $("#remote_page").get(0);
 
@@ -58,6 +68,9 @@ function colorSection(xPathOne, xPathTwo, fieldName, findTbl) {
     update(fieldName);
 }
 
+/*
+ * clear current selection from all tables
+ */
 function clear(event) {
     one = undefined;
     two = undefined;
@@ -65,6 +78,9 @@ function clear(event) {
     $("th,td").removeClass("selected");
 }
 
+/*
+ * handle a mouse click on a table cell.  highlight selected cell(s)
+ */
 function click(event) {
     if (!event.target)
 	return;
@@ -89,6 +105,9 @@ function click(event) {
     return false;
 }
 
+/*
+ * mark the highlighted cells with the given class.  handle rowspans and colspans correctly.
+ */
 function update(className) {
     var r1, r2, c1, c2; // logical row and col
 
@@ -105,6 +124,9 @@ function update(className) {
     });
 }
 
+/*
+ * handle colspans and rowspans
+ */
 function lookupLogicalCorners(cell) {
     var top = cell.parentNode.rowIndex;
     var left = cell.cellIndex;
@@ -120,6 +142,9 @@ function lookupLogicalCorners(cell) {
 	     right: right };
 }
 
+/*
+ * union
+ */
 function combineBoxes(cell1, cell2) {
     return { top: (cell1.top < cell2.top) ? cell1.top : cell2.top,
              left: (cell1.left < cell2.left) ? cell1.left : cell2.left,
@@ -127,6 +152,9 @@ function combineBoxes(cell1, cell2) {
              right: (cell1.right > cell2.right) ? cell1.right : cell2.right };
 }
 
+/*
+ * intersection test
+ */
 function boxIntersects(box1, box2) {
     return box1.left <= box2.right
 	&& box1.right >= box2.left 
@@ -134,8 +162,10 @@ function boxIntersects(box1, box2) {
 	&& box1.bottom >= box2.top;
 }
 
-// counts table rows and column, taking into account col and rowspans
-// assumes all rows have the same number of columns
+/*
+ * counts table rows and column, taking into account colspans and rowspans.
+ * assumes all rows have the same number of columns
+ */
 function computeLogicalTable() {
     // figure out the size of the logical table
     cols = 0;
@@ -178,7 +208,9 @@ function computeLogicalTable() {
     });
 }
 
-// compute the xpath for the given node
+/*
+ * compute the xpath for the given node
+ */
 function getXPath(node) {
     if (node.id == "remote_page") {
 	return "";
