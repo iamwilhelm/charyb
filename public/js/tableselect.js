@@ -1,13 +1,16 @@
 // globals
 var one, two, rows, cols, tbl, logicalTable;
 
+/*
+ * make all tables selectable (the mouseover highlight) and handlers of mouse clicks
+ */
 $(document).ready(function() {
     $("#remote_page table").addClass("selectable");
     $("#remote_page table").mousedown(click);
 });
 
 /*
- * set a field to the currently selected cells. color table, set values in textarea, set xpaths
+ * set a field to the currently selected cells. color table, set values in textarea, set xpaths.
  * fieldName is colLabels, rowLabels or data
  */
 function setButton(fieldName) {
@@ -43,7 +46,7 @@ function colorTable() {
     colorSection($("#table_info input[name=imported_table[data_one]]").val(), 
 		 $("#table_info input[name=imported_table[data_two]]").val(), "data", false);
     
-    var cells = $("th.data,td.data");
+    var cells = $("th.data, td.data");
     var value = $.map(cells, function(cell) { return $.trim(cell.innerHTML); });
     $("#table_info textarea[name=data_content]").html(value.join("\n"));
 }
@@ -75,7 +78,7 @@ function clear(event) {
     one = undefined;
     two = undefined;
 
-    $("th,td").removeClass("selected");
+    $("th, td").removeClass("selected");
 }
 
 /*
@@ -116,7 +119,7 @@ function update(className) {
     var selectedBox = combineBoxes(boxOne, boxTwo);
 
     //alert(selectedBox.top + " " + selectedBox.left + " " + selectedBox.bottom + " "+ selectedBox.right);
-    $("th,td", tbl).each(function() {
+    $("th, td", tbl).each(function() {
 	if (boxIntersects(lookupLogicalCorners(this), selectedBox))
 	    $(this).addClass(className);
 	else
@@ -170,7 +173,7 @@ function computeLogicalTable() {
     // figure out the size of the logical table
     cols = 0;
     rows = $("tr", tbl).length;
-    $("tr:first > th,tr:first > td").each(function() {
+    $("tr:first > th, tr:first > td").each(function() {
 	if (isNaN($(this).attr("colSpan")))
 	    cols++;
 	else
@@ -190,7 +193,7 @@ function computeLogicalTable() {
 
     // go through the actual table cells, row by row, filling in the logical table with
     // indices to which actual cell each logical cell points.
-    $("th,td", tbl).each(function() {
+    $("th, td", tbl).each(function() {
 	var aRow = this.parentNode.rowIndex; // actual row (in html)
 	var aCol = this.cellIndex;	     // actual col
 	var lRow = aRow; // logical row (in table)
