@@ -11,7 +11,7 @@ $(document).ready(function() {
 
 /*
  * set a field to the currently selected cells. color table, set values in textarea, set xpaths.
- * fieldName is colLabels, rowLabels or data
+ * fieldName is col_labels, row_labels or data
  */
 function setButton(fieldName) {
     if (one == null || two == null) {
@@ -22,7 +22,7 @@ function setButton(fieldName) {
     $("th, td").removeClass(fieldName);
 
     var cells = $("th.selected, td.selected");
-    var value = $.map(cells, function(cell) { return $.trim(cell.innerHTML); });
+    var value = buildHierarchies(fieldName, cells)
     cells.addClass(fieldName);
     cells.removeClass("selected");
 
@@ -33,6 +33,32 @@ function setButton(fieldName) {
 
     $("#table_info input[name=imported_table[" + fieldName + "_one]]").val(getXPath(one));
     $("#table_info input[name=imported_table[" + fieldName + "_two]]").val(getXPath(two));
+}
+
+/*
+ * column header hierarchies are made by flattening the header rows.
+ * row header hierarchies are made by lining up each items intentation.
+ */
+function buildHierarchies(fieldName, cells) {
+    if (fieldName == "col_labels") {
+        var ret = [];
+        var top = lookupLogicalCorners(cells[0]).top;
+        var bottom = lookupLogicalCorners(cells[cells.length - 1]).bottom;
+
+        var bottomCells = Functional.select('lookupLogicalCorners(x).bottom == bottom', cells);
+        for (var ii = 0; ii < bottomCells.length; ii++) {
+            var col = lookupLogicalCorners(bottomCells[ii]).left;
+            var hCells = []
+            for (var rr = top; rr <= bottom; rr++) {
+                var cell = lookupCell(logicalTable[rr][col]);
+                if (hCells[hCells.length - 1] != cell)
+                    hCells.push(cell);
+            }
+            ret[ii] = Functional.map('x.innerHTML', hCells).join("`")
+        }
+    }
+
+    return ret;
 }
 
 /* 
@@ -47,7 +73,7 @@ function colorTable() {
 		 $("#table_info input[name=imported_table[data_two]]").val(), "data", false);
     
     var cells = $("th.data, td.data");
-    var value = $.map(cells, function(cell) { return $.trim(cell.innerHTML); });
+    var value = Functional.map('trim(x.innerHTML)', cells);
     $("#table_info textarea[name=data_content]").html(value.join("\n"));
 }
 
@@ -128,6 +154,14 @@ function update(className) {
 }
 
 /*
+ * lookup cell in actual table given its row and col from logical table.
+ * pos is two element array: [row, col]
+ */
+function lookupCell(pos) {
+    return tbl.rows[pos[0]].cells[pos[1]];
+}
+
+/*
  * handle colspans and rowspans
  */
 function lookupLogicalCorners(cell) {
@@ -166,8 +200,11 @@ function boxIntersects(box1, box2) {
 }
 
 /*
- * counts table rows and column, taking into account colspans and rowspans.
- * assumes all rows have the same number of columns
+ * counts table rows and columns, taking into account colspans and rowspans.
+ * assumes all rows have the same number of columns.
+ *
+ * builds logicalTable, a 2d array where each value is an array containing the row
+ * and col of the cell in the html table to which it maps.
  */
 function computeLogicalTable() {
     // figure out the size of the logical table
@@ -182,9 +219,9 @@ function computeLogicalTable() {
 
     // allocate the logical table
     logicalTable = new Array();
-    for (rr = 0; rr < rows; rr++) {
+    for (var rr = 0; rr < rows; rr++) {
 	logicalTable[rr] = new Array();
-	for (cc = 0; cc < cols; cc++) {
+	for (var cc = 0; cc < cols; cc++) {
 	    logicalTable[rr][cc] = new Array();
 	    logicalTable[rr][cc][0] = -1;
 	    logicalTable[rr][cc][1] = -1;
@@ -202,8 +239,8 @@ function computeLogicalTable() {
 	    lCol++;
 	var rowSpan = (this.rowSpan > 1) ? this.rowSpan : 1;
 	var colSpan = (this.colSpan > 1) ? this.colSpan : 1;
-	for (rr = lRow; rr < (lRow + rowSpan); rr++) {
-	    for (cc = lCol; cc < (lCol + colSpan); cc++) {
+	for (var rr = lRow; rr < (lRow + rowSpan); rr++) {
+	    for (var cc = lCol; cc < (lCol + colSpan); cc++) {
 		logicalTable[rr][cc][0] = aRow;
                 logicalTable[rr][cc][1] = aCol;
 	    }
