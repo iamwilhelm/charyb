@@ -20,12 +20,11 @@ function setButton(fieldName) {
     }
 
     $("th, td").removeClass(fieldName);
-
     var cells = $("th.selected, td.selected");
-    var value = buildHierarchies(fieldName, cells)
     cells.addClass(fieldName);
     cells.removeClass("selected");
 
+    var value = buildHierarchies(fieldName, cells)
     if (fieldName == "data")
 	$("#table_info textarea[name=data_content]").html(value.join("\n"));
     else
@@ -37,26 +36,51 @@ function setButton(fieldName) {
 
 /*
  * column header hierarchies are made by flattening the header rows.
- * row header hierarchies are made by lining up each items intentation.
+ * row header hierarchies are made by lining up each items indentation.
  */
 function buildHierarchies(fieldName, cells) {
     if (fieldName == "col_labels") {
         var ret = [];
         var top = lookupLogicalCorners(cells[0]).top;
         var bottom = lookupLogicalCorners(cells[cells.length - 1]).bottom;
-
-        var bottomCells = Functional.select('lookupLogicalCorners(x).bottom == bottom', cells);
+        var bottomCells = Functional.select(function(x) { return lookupLogicalCorners(x).bottom == bottom; }, cells);
         for (var ii = 0; ii < bottomCells.length; ii++) {
             var col = lookupLogicalCorners(bottomCells[ii]).left;
             var hCells = []
             for (var rr = top; rr <= bottom; rr++) {
-                var cell = lookupCell(logicalTable[rr][col]);
+                var cell = cleanStr(lookupCell(logicalTable[rr][col]).innerHTML);
                 if (hCells[hCells.length - 1] != cell)
                     hCells.push(cell);
             }
-            ret[ii] = Functional.map('x.innerHTML', hCells).join("`")
+            ret[ii] = hCells.join("`")
         }
     }
+    else if (fieldName == "row_labels") {
+        var ret = [];
+        var lastIndent = 0;
+        var parent = null;
+        var ancestors = [];
+        for (var ii = 0; ii < cells.length; ii++) {
+            var hh = cleanStr(cells[ii].innerHTML);
+            var indent = hh.length - ltrim(hh).length;
+            hh = trim(hh);
+            if (indent > lastIndent && parent != null) {
+                for (var pp = 0; pp < indent - lastIndent - 1; pp++)
+                    ancestors.push(null);
+                ancestors.push(parent);
+            }
+            else if (indent < lastIndent)
+                for (var pp = 0; pp < lastIndent - indent; pp++)
+                    ancestors.pop();
+            lastIndent = indent;
+            ancestors.push(hh);
+            ret.push(Functional.select(function(x) { return x != null; }, ancestors).join("`"));
+            ancestors.pop();
+            parent = hh;
+        }
+    }
+    else
+        ret = Functional.map(function(x) { return trim(x.innerHTML); }, cells);
 
     return ret;
 }
@@ -73,7 +97,7 @@ function colorTable() {
 		 $("#table_info input[name=imported_table[data_two]]").val(), "data", false);
     
     var cells = $("th.data, td.data");
-    var value = Functional.map('trim(x.innerHTML)', cells);
+    var value = Functional.map(function(x) { return trim(x.innerHTML); }, cells);
     $("#table_info textarea[name=data_content]").html(value.join("\n"));
 }
 
