@@ -48,7 +48,7 @@ function buildHierarchies(fieldName, cells) {
             var col = lookupLogicalCorners(bottomCells[ii]).left;
             var hCells = []
             for (var rr = top; rr <= bottom; rr++) {
-                var cell = cleanStr(lookupCell(logicalTable[rr][col]).innerHTML);
+                var cell = trim(cleanStr(lookupCell(logicalTable[rr][col]).innerHTML));
                 if (hCells[hCells.length - 1] != cell)
                     hCells.push(cell);
             }
