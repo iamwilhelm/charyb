@@ -12,3 +12,33 @@ html, body {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
 }
+
+table#datasources {
+    width: 80%;
+}
+
+table#datasources th {
+    font-weight: bold;
+    background: #eeeeee;
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+table#datasources td.num {
+    text-align: center;
+}
+
+table#datasources td.name {
+    text-indent: -3em;
+    padding-left: 3em;
+}
+
+div#table_info input[type='text'], div#table_info textarea {
+    width: 90%;
+}
+
+div.half {
+    overflow: scroll;
+    height: 500px;
+}
