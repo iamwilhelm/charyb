@@ -9,28 +9,28 @@ import redis, updatetotals
 
 VERSION = '0.1.3'
 
-def _toKey(strIn):
+def _tokey(str_in):
     ''' lowercase and underscore a string '''
-    return strIn.replace(' ','_').lower()
+    return str_in.replace(' ','_').lower()
 
-def _getNumber(strIn):
+def _getnumber(str_in):
     try:
-        return str(float(strIn))
+        return str(float(str_in))
     except:
         return 'NaN'
 
 class Importer:
-    def __init__(self, fn, dbNum):
+    def __init__(self, fn, dbnum):
         self.fname = fn
         self.fin = None
         self.hdr = {}
         self.data = None
         self.name = None
-        self.searchDbNum = dbNum
-        self.dataDbNum = dbNum+1
-        self.db = redis.Redis(db=self.dataDbNum)
+        self.search_db_num = dbnum
+        self.data_db_num = dbnum+1
+        self.db = redis.Redis(db=self.data_db_num)
 
-    def _openFile(self):
+    def _openfile(self):
         # check that file exists, open it.  if not file, read from stdin
         if (self.fname == None):
             print 'reading from stdin'
@@ -41,7 +41,7 @@ class Importer:
             self.fin = open(self.fname, 'rb')
         self.csvIn = csv.reader(self.fin, skipinitialspace=True)
 
-    def _readHeader(self):
+    def _readheader(self):
         # read header from file
         self.hdr['otherDims'] = []
 
@@ -66,9 +66,9 @@ class Importer:
             if not ff in self.hdr:
                 raise Exception('header must contain an entry for ' + ff)
 
-        self.name = _toKey(self.hdr['name'])
+        self.name = _tokey(self.hdr['name'])
 
-    def _getSearchTerms(self, dims):
+    def _get_search_terms(self, dims):
         # get a list of search terms given a dict of 
         ret = []
         for kk in dims:
@@ -80,7 +80,7 @@ class Importer:
 
     def _remove(self):
         # remove the table whos header is loaded
-        self.db.select(self.dataDbNum)
+        self.db.select(self.data_db_num)
         if self.db.sismember('datasets', self.hdr['name']):
             print 'removing: ' + self.hdr['name']
             meta = json.loads(self.db.get(self.name))
@@ -95,13 +95,13 @@ class Importer:
                 self.db.delete(kk)
 
             # remove search terms
-            self.db.select(self.searchDbNum)
-            for ss in self._getSearchTerms(meta['dims']):
-                self.db.srem(_toKey(ss), self.hdr['name'])
-                if self.db.scard(_toKey(ss))==0:
-                    self.db.delete(_toKey(ss))
+            self.db.select(self.search_db_num)
+            for ss in self._get_search_terms(meta['dims']):
+                self.db.srem(_tokey(ss), self.hdr['name'])
+                if self.db.scard(_tokey(ss))==0:
+                    self.db.delete(_tokey(ss))
 
-    def _readData(self):
+    def _readdata(self):
         # read row labels and data
         self.hdr['rows'] = []
         self.data = []
@@ -109,32 +109,32 @@ class Importer:
             self.hdr['rows'].append(fields[0])
             self.data.append(fields[1:])
 
-    def _updateDimLabels(self, meta, dimName, newDimLabels):
+    def _update_dim_labels(self, meta, dimname, new_dim_labels):
         # create or expand dimension labels list
-        if dimName in meta['dims']:
-            dimLabels = meta['dims'][dimName]
+        if dimname in meta['dims']:
+            dimlabels = meta['dims'][dimname]
         else:
-            dimLabels = []
-            meta['dims'][dimName] = dimLabels
-        dimLabels += set(newDimLabels).difference(dimLabels)
+            dimlabels = []
+            meta['dims'][dimname] = dimlabels
+        dimlabels += set(new_dim_labels).difference(dimlabels)
 
-    def _importData(self):
+    def _importdata(self):
         # finish reading the input file, saving the row names and saving the data to the db
         # add header info to the db
         print 'importing: ' + self.hdr['name']
         try:
-            self._readData()
+            self._readdata()
 
             # load meta struct if it exists
-            self.db.select(self.dataDbNum)
+            self.db.select(self.data_db_num)
             if self.db.exists(self.name):
                 meta = json.loads(self.db.get(self.name))
             else:
                 meta = { 'dims': {}, 'otherDims': [], 'sources': {}, 'units': {} }
 
             # add or update row and col labels
-            self._updateDimLabels(meta, self.hdr['rowLabel'], self.hdr['rows'])
-            self._updateDimLabels(meta, self.hdr['colLabel'], self.hdr['cols'])
+            self._update_dim_labels(meta, self.hdr['rowLabel'], self.hdr['rows'])
+            self._update_dim_labels(meta, self.hdr['colLabel'], self.hdr['cols'])
 
             # import other dimension names, populate otherDims list
             meta['otherDims'] = list(set(meta['otherDims']).union( map(operator.itemgetter(0), self.hdr['otherDims']) ))
@@ -143,12 +143,12 @@ class Importer:
                     meta['dims'][name] = list(set(meta['dims'][name]).union([value]))
                 else:
                     meta['dims'][name] = [ value ]
-            otherDims = sorted(self.hdr['otherDims'])
+            otherdims = sorted(self.hdr['otherDims'])
 
             # pack metadata into struct
             meta['descr'] = self.hdr['descr']
             meta['default'] = self.hdr['default']
-            metaKey = 'default' if len(self.hdr['otherDims'])==0 else '|'.join( map(operator.itemgetter(1), otherDims) )
+            metaKey = 'default' if len(self.hdr['otherDims'])==0 else '|'.join( map(operator.itemgetter(1), otherdims) )
             meta['sources'][metaKey] = {'url': self.hdr['url'],
                                         'license': self.hdr['license'], 
                                         'source': self.hdr['source'], 
@@ -156,31 +156,31 @@ class Importer:
             if (len(self.hdr['units'])==1):
                 meta['units']['default'] = self.hdr['units'][0]
             else:
-                meta['units'].update(dict(zip([ _toKey(x) for x in self.hdr['cols'] ], self.hdr['units'])))
+                meta['units'].update(dict(zip([ _tokey(x) for x in self.hdr['cols'] ], self.hdr['units'])))
 
             # store metadata as json string
-            metaStr = json.dumps(meta)
-            self.db.set(self.name, metaStr)
+            meta_str = json.dumps(meta)
+            self.db.set(self.name, meta_str)
 
             # add the data to the db
             dims = {self.hdr['rowLabel']: '', self.hdr['colLabel']: ''}
-            dims.update(otherDims)
+            dims.update(otherdims)
 
             for rh,rd in zip(self.hdr['rows'],self.data):
                 dims[self.hdr['rowLabel']] = rh
                 for ch,cd in zip(self.hdr['cols'],rd):
                     dims[self.hdr['colLabel']] = ch
-                    key = _toKey(self.name+'|'+'|'.join( map(operator.itemgetter(1), sorted(dims.items())) ))
-                    self.db.set(key, _getNumber(cd))
+                    key = _tokey(self.name+'|'+'|'.join( map(operator.itemgetter(1), sorted(dims.items())) ))
+                    self.db.set(key, _getnumber(cd))
 
             # add dataset name
             self.db.sadd('datasets', self.hdr['name'])
 
             # add lookup data
-            self.db.select(self.searchDbNum)
-            self.db.sadd(_toKey(self.hdr['name']), '_')
-            for ss in self._getSearchTerms(meta['dims']):
-                self.db.sadd(_toKey(self.hdr['name']+'|'+ss), self.hdr['name'])
+            self.db.select(self.search_db_num)
+            self.db.sadd(_tokey(self.hdr['name']), '_')
+            for ss in self._get_search_terms(meta['dims']):
+                self.db.sadd(_tokey(self.hdr['name']+'|'+ss), self.hdr['name'])
                 
         except Exception, ex:
             print 'FAIL: ' + str(ex)
@@ -191,28 +191,28 @@ class Importer:
     def _postprocess(self):
         # make sure all dimensions have total columns
         # unless they have cols with differing units or hierarchies
-        self.db.select(self.dataDbNum)
+        self.db.select(self.data_db_num)
         updatetotals.updateTotals(self.db, self.name)
                 
 
     def removeTable(self):
         # import a new table into the db
-        self._openFile()
-        self._readHeader()
+        self._openfile()
+        self._readheader()
         self.fin.close()
         self._remove()
 
     def importFile(self):
         # import a table into the db.  if its already there, remove it first
-        self._openFile()
-        self._readHeader()
+        self._openfile()
+        self._readheader()
         if len(self.hdr['otherDims'])==0:
             self._remove()
-        self._importData()
+        self._importdata()
         self._postprocess()
         self.fin.close()
 
-def printHelp():
+def help():
     print 'Usage importer.py [Options]'
     print ''
     print 'Options:'
@@ -228,12 +228,12 @@ if __name__ == '__main__':
     
     # parse command line args
     if len(sys.argv) == 1 or sys.argv[1] == '-h':
-        printHelp()
+        help()
         sys.exit(0)
 
     imp = False
     rem = False
-    dbNum = 0
+    dbnum = 0
 
     try:
         ii = 1
@@ -260,15 +260,15 @@ if __name__ == '__main__':
                 if not len(sys.argv) > ii+1:
                     raise Exception('-n option requires number argument')
                 ii+=1
-                dbNum = int(sys.argv[ii])
+                dbnum = int(sys.argv[ii])
             ii+=1
 
         if imp:
-            Importer(fname, dbNum).importFile()
+            Importer(fname, dbnum).importFile()
         elif rem:
-            Importer(fname, dbNum).removeTable()
+            Importer(fname, dbnum).removeTable()
         else: # import from stdin
-            Importer(None, dbNum).importFile()
+            Importer(None, dbnum).importFile()
 
     except Exception,ex:
         print 'FAIL: ' + str(ex)
