@@ -7,7 +7,7 @@ sys.path.append('redis')                # for running from local dir
 sys.path.append('script/redis')         # for running from charyb dir
 import redis, updatetotals
 
-VERSION = '0.1.2'
+VERSION = '0.1.3'
 
 def _toKey(strIn):
     ''' lowercase and underscore a string '''
@@ -156,7 +156,7 @@ class Importer:
             if (len(self.hdr['units'])==1):
                 meta['units']['default'] = self.hdr['units'][0]
             else:
-                meta['units'].update(dict(zip(self.hdr['cols'],self.hdr['units'])))
+                meta['units'].update(dict(zip([ _toKey(x) for x in self.hdr['cols'] ], self.hdr['units'])))
 
             # store metadata as json string
             metaStr = json.dumps(meta)
