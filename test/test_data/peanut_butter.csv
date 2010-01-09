@@ -3,7 +3,7 @@ descr, "Uses of Peanut Butter"
 source, fake
 url, "http://www.graphbug.com/fakedata_pb.csv"
 license, "Public Domain"
-publishDate, 2009
+publishDate, Thu Jan 01 00:00:00 -0500 2009
 units, Tons, Gallons, Tons, Gallons, Tons, Tons
 default, "State"
 rowLabel,"State"

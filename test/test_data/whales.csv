@@ -3,7 +3,7 @@ descr, "Whale Population"
 source, fake
 url, "http://www.graphbug.com/fakedata_whales.csv"
 license, Public Domain
-publishDate, 1985
+publishDate, Tue Jan 01 00:00:00 -0500 1985
 units, Animals
 default, "State"
 rowLabel,"State"

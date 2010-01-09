@@ -3,7 +3,7 @@ descr, "Info about oil"
 source, fake
 url, "http://www.graphbug.com/fakedata_oil_1999.csv"
 license, Public Domain
-publishDate, 1999
+publishDate, Fri Jan 01 00:00:00 -0500 1999
 units, Barrels
 default, "Year"
 otherDims, Year,1999

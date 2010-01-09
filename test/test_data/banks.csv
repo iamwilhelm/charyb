@@ -3,7 +3,7 @@ descr, "Total Number of Banks by year"
 source, fake
 url, "http://www.graphbug.com/fakedata_banks.csv"
 license, Public Domain
-publishDate, 1980
+publishDate, Tue Jan 01 00:00:00 -0500 1980
 units, Buildings
 default, "Year"
 rowLabel,"State"
