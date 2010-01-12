@@ -80,7 +80,7 @@ function buildHierarchies(fieldName, cells) {
         }
     }
     else
-        ret = Functional.map(function(x) { return trim(x.textContent); }, cells);
+        ret = Functional.map(function(x) { return trim(cleanStr(x.textContent)); }, cells);
 
     return ret;
 }
