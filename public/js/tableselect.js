@@ -48,7 +48,7 @@ function buildHierarchies(fieldName, cells) {
             var col = lookupLogicalCorners(bottomCells[ii]).left;
             var hCells = []
             for (var rr = top; rr <= bottom; rr++) {
-                var cell = trim(cleanStr(lookupCell(logicalTable[rr][col]).innerHTML));
+                var cell = trim(cleanStr(lookupCell(logicalTable[rr][col]).textContent));
                 if (hCells[hCells.length - 1] != cell)
                     hCells.push(cell);
             }
@@ -61,7 +61,7 @@ function buildHierarchies(fieldName, cells) {
         var parent = null;
         var ancestors = [];
         for (var ii = 0; ii < cells.length; ii++) {
-            var hh = cleanStr(cells[ii].innerHTML);
+            var hh = cleanStr(cells[ii].textContent);
             var indent = hh.length - ltrim(hh).length;
             hh = trim(hh);
             if (indent > lastIndent && parent != null) {
@@ -80,7 +80,7 @@ function buildHierarchies(fieldName, cells) {
         }
     }
     else
-        ret = Functional.map(function(x) { return trim(x.innerHTML); }, cells);
+        ret = Functional.map(function(x) { return trim(x.textContent); }, cells);
 
     return ret;
 }
@@ -140,10 +140,13 @@ function click(event) {
 
     if (!event.shiftKey) {
 	tbl = event.target.parentNode.parentNode.parentNode;
+
+        // clean up table.  remove links and internal tables.
+        $("table", tbl).remove();
+        $("td div", tbl).each(function(td){ $(this).replaceWith($(this).text());});
+
 	computeLogicalTable();
-
 	clear(event);
-
 	one = event.target;
 	$(one).addClass("selected");
     } else {
@@ -234,7 +237,7 @@ function computeLogicalTable() {
     // figure out the size of the logical table
     cols = 0;
     rows = $("tr", tbl).length;
-    $("tr:first > th, tr:first > td").each(function() {
+    $("tr:first > th, tr:first > td", tbl).each(function() {
 	if (isNaN($(this).attr("colSpan")))
 	    cols++;
 	else
