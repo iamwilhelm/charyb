@@ -7,6 +7,7 @@ var one, two, rows, cols, tbl, logicalTable;
 $(document).ready(function() {
     $("#remote_page table").addClass("selectable");
     $("#remote_page table").mousedown(click);
+    $("#remote_page script").remove();
 });
 
 /*
