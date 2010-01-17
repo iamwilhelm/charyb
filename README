@@ -27,7 +27,8 @@ Then install the following gems:
   # for web application
   sudo gem install -d sinatra -v 0.9.4
   sudo gem install -d hpricot -v 0.8.1
-  sudo gem install -d couchrest -v 0.33
+  # sudo gem install -d couchrest -v 0.33
+  sudo gem install -d sqlite3-ruby -v 1.2.5  # only for sqlite3
 
   # for testing
   sudo gem install -d rack-test -v 0.4.2
