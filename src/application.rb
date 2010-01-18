@@ -31,6 +31,19 @@ get '/' do
   redirect "/datasources"
 end
 
+######### Error routes ##########
+
+# Error message
+get '/error/:id' do
+  @msg = case params["id"]
+         when "1" then
+           "Number of data values doesn't match number of rows and columns"
+         else
+           "Unknown Error"
+         end
+  erb :"/error/index"
+end
+
 ########## Datasource routes ##########
 
 # Can make new datasource and lists data sources in the db
@@ -110,10 +123,13 @@ end
 post '/datasources/:source_id/imported_tables' do
   @datasource = Source::Datasource.find(params["source_id"])
   @imported_table = @datasource.imported_tables.create!(params["imported_table"])
-
-  Charyb.update_redis(@datasource, @imported_table, params["data_content"])
-
-  redirect back
+  
+  begin
+    Charyb.update_redis(@datasource, @imported_table, params["data_content"])
+    redirect back
+  rescue Exception => e
+    redirect "/error/" + e.message
+  end  
 end
 
 # edit table ajax
@@ -129,7 +145,10 @@ put '/datasources/:source_id/imported_tables/:id' do
   @imported_table = @datasource.imported_tables.find(params["id"])
   @imported_table.update_attributes(params["imported_table"])
   
-  Charyb.update_redis(@datasource, @imported_table, params["data_content"])
-
-  redirect back
+  begin
+    Charyb.update_redis(@datasource, @imported_table, params["data_content"])
+    redirect back
+  rescue Exception => e
+    redirect "/error/" + e.message
+  end  
 end
