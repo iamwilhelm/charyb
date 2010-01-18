@@ -114,24 +114,30 @@ h2. Import Table Use Case
 8. a form is displayed in the right div.
 9. user fills out the fields from "Table heading" to "Converter."
    Some fields have special formatting rules:
-   - "col heading" and "row heading" can be "category" if no word
-     describes the collection of headings.
-   - "other dims" should be a csv list of "dimension name, dimension value" pairs.
+   - "col heading" or "row heading" can be "Category" if no word
+     describes the collection of headings.  Most of the time "row
+     heading" will be "Year" or "State."
+   - "other dims" should be a csv list of "dimension name, dimension
+     value" pairs.  For example, "Year, 2006"
+   - "default" should match the value of the "row header" "col header"
+     or one of the "other dims."
    - "published at" should be a date, eg. "01/01/2009."
    - "units" can be a single value or can be a csv list for each column.
    - "converter" can be blank, or a single value, or a csv list for each
-     column.  values must match a converter name.
+     column.  values must match a converter name. (not implemented yet)
 10. user clicks a cell at one corner of the column headers in the table
-    on the right div.
+    on the left div.
 11. the cell is colored red.
 12. user shift-clicks a cell at the opposite corner of the column headers.
 13. the column headers are all colored red.
 14. the user clicks the "set" button next to "Col labels."
 15. the column headers are all colored green, their values are listed
-    in the "Col labels" textarea.
+    in the "Col labels" textarea, one per line.
 16. the user does the same for row headers and data.
-17. row headers are colored brown; data cells are colored purple.
-18. user clicks "Create."
+17. row headers are colored brown; data cells are colored purple.  if
+    there are n row headers and m col headers there must be nxm data
+    values.
+18. user clicks the "Create" button.
 19. right div removes the form and lists the table as a link.
 
 
@@ -146,11 +152,11 @@ h2. Edit Table Use Case
    new table in the right div.
 7. user clicks edit.
 8. browser shows partially completed form used to import the table.
-9. user clicks "Finish Loading" button.
+9. user clicks the "Finish Loading" button.
 10. browser selects cells in the table in the right div, coloring the
    table as it was when it was imported, and fills in the textareas
    with selected values in the form.
-11. user makes changes and clicks "Update."
+11. user makes changes and clicks the "Update" button.
 12. right div removes the form and lists the table as a link.
 
 
