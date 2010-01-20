@@ -2,7 +2,7 @@
 
 # updates totals dimensions for a given dataset
 
-import sys, itertools, operator, json, traceback
+import sys, itertools, operator, json, traceback, copy
 if 'redis' not in sys.path:
     sys.path.append('redis')                # for running from local dir
 if 'script/redis' not in sys.path:
@@ -14,6 +14,11 @@ VERSION = '0.0.1'
 def _toKey(strIn):
     ''' lowercase and underscore a string '''
     return strIn.replace(' ','_').lower()
+
+def _keydims_toKey(dataset, key_dims):
+    ''' given a list or tuple of key dimensions, convert it to a key '''
+    return _toKey( dataset+'|' + '|'.join(list(key_dims)) );
+
 
 def _applyPattern(dimLabels, flag):
     ''' set dimension labels according to pattern flags '''
@@ -46,7 +51,7 @@ def _getPatterns(labels):
     '''
     ret = []
     n = len(labels)
-    for dd in range(1,n+1):
+    for dd in range(1, n + 1):
         pattern = [ list(aa) for aa in set(itertools.permutations('e'*(n-dd)+'t'*dd)) ]
         # set first 't' to 'a' (sum over first non-'e')
         for ii in pattern:
@@ -73,6 +78,19 @@ def updateTotals(dw, dataSet):
     >>> print str(dw.get('Oil|Total|Total|Total'))
     53822.6742548
     '''
+
+    # helper function to find the indicies of all elements satisfied by the compare 
+    # function in array, rather than the elements like in filter()
+    def find_all(array, compare_func):
+        def filter_block(indicies, index):
+            if compare_func(array[index]):
+                indicies.append(index)
+            return indicies
+        return reduce(filter_block, xrange(0, len(array)), [])
+    
+    def flatten(listOfLists):
+        return list(itertools.chain.from_iterable(listOfLists))
+
     # update the totals for a given dataset
     # get dimension labels from dataset metadata.  convert from
     # unicode to strings, make sure they're ordered by dimension name,
@@ -81,21 +99,25 @@ def updateTotals(dw, dataSet):
     
     # figure out all of the "Total" dimensions that need to be calculated
     patterns = _getPatterns(allDimLabels)
-    for pp in patterns:
+    for pattern in patterns:
+
         # expand a pattern into a set of summations, execute each one
-        params = _getSumParams(allDimLabels, pp)
+        params = _getSumParams(allDimLabels, pattern)
         for pr in params:
-            # lhs is the name of the redis key being set
-            lhs = [ ['Total'] if len(x)>1 else x for x in pr ]
-            lhs = _toKey(dataSet+'|' + '|'.join([ x[0] for x in lhs ]))
-            # rhs is a list of redis keys being summed
-            rhs = [ dataSet+'|' + '|'.join(map(_toKey, pp)) for pp in itertools.product(*pr) ]
+            # produce the key to store
+            key_dims = copy.deepcopy(pr)
+            for index_to_change in find_all(pattern, lambda x: x == 'a'):
+                key_dims[index_to_change] = ["Total"]
+            key_dims = flatten(key_dims)
+            key = _keydims_toKey(dataSet, key_dims)
+
+            # calculate total value
+            keys_to_total = [ _keydims_toKey(dataSet, pp) for pp in itertools.product(*pr) ]
             try:
-                total = reduce(operator.add, [ float(x) for x in dw.mget(*rhs) ] )
+                total = reduce(operator.add, [ float(x) for x in dw.mget(*keys_to_total) ] )
             except:
                 total = 'NaN'
-            #print lhs + ' = ' + str(total)
-            dw.set(lhs, str(total))
+            dw.set(key, str(total))
  
 def printHelp():
     print 'Usage: updatetotals.py [Options] [dataset]'
