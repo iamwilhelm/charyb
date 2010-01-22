@@ -81,25 +81,22 @@ class Importer:
     def _remove(self):
         # remove the table whos header is loaded
         self.db.select(self.data_db_num)
-        if self.db.sismember('datasets', self.hdr['name']):
-            print 'removing: ' + self.hdr['name']
-            meta = json.loads(self.db.get(self.name))
+        print 'removing: ' + self.hdr['name']
 
-            # remove meta
-            self.db.srem('datasets', self.hdr['name'])
-            self.db.delete(self.name)
+        # remove meta
+        self.db.srem('datasets', self.hdr['name'])
+        self.db.delete(self.name)
 
-            # remove data
-            keys = self.db.keys(self.name+'*')
-            for kk in keys:
+        # remove data
+        for kk in self.db.keys(self.name+'*'):
+            self.db.delete(kk)
+
+        # remove search terms
+        self.db.select(self.search_db_num)
+        for kk in self.db.keys(self.name+'*'):
+            self.db.srem(kk, self.hdr['name'])
+            if self.db.scard(kk)==0:
                 self.db.delete(kk)
-
-            # remove search terms
-            self.db.select(self.search_db_num)
-            for ss in self._get_search_terms(meta['dims']):
-                self.db.srem(_tokey(ss), self.hdr['name'])
-                if self.db.scard(_tokey(ss))==0:
-                    self.db.delete(_tokey(ss))
 
     def _readdata(self):
         # read row labels and data
