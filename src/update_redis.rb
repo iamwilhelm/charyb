@@ -49,7 +49,11 @@ module Charyb
       end
 
       pipe.close_write
-      #    fout.write pipe.read
+      #fout.write pipe.read
+      while !pipe.eof?
+          pipe.readline
+      end
     end
+
   end
 end
