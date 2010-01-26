@@ -8,7 +8,7 @@ $(document).ready(function() {
 // this gets rid of html whitespace and gov footnotes
 function cleanStr(str) {
     ret = str;
-    return ret.replace(/\n|<br>|\(\d\)$|\/\d$|%/g,"").replace(/&nbsp;/g," ");
+    return ret.replace(/\(\d\)$|\/\d$|%/g,"").replace(/&nbsp;|&#65533;|<br>|\n/g," ");
 }
 
 // these were from http://www.somacon.com/p355.php
