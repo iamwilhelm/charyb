@@ -2,14 +2,14 @@
 
 # updates totals dimensions for a given dataset
 
-import sys, itertools, operator, json, traceback, copy
+import sys, itertools, operator, json, traceback, copy, math
 if 'redis' not in sys.path:
     sys.path.append('redis')                # for running from local dir
 if 'script/redis' not in sys.path:
     sys.path.append('script/redis')         # for running from charyb dir
 import redis
 
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 def _toKey(strIn):
     ''' lowercase and underscore a string '''
@@ -19,6 +19,13 @@ def _keydims_toKey(dataset, key_dims):
     ''' given a list or tuple of key dimensions, convert it to a key '''
     return _toKey( dataset+'|' + '|'.join(list(key_dims)) );
 
+def _getnumber(str_in):
+    ''' get a number or zero '''
+    try:
+        num = float(str_in)
+        return num if not math.isnan(num) else 0
+    except:
+        return 0
 
 def _applyPattern(dimLabels, flag):
     ''' set dimension labels according to pattern flags '''
@@ -114,7 +121,7 @@ def updateTotals(dw, dataSet):
             # calculate total value
             keys_to_total = [ _keydims_toKey(dataSet, pp) for pp in itertools.product(*pr) ]
             try:
-                total = reduce(operator.add, [ float(x) for x in dw.mget(*keys_to_total) ] )
+                total = reduce(operator.add, [ _getnumber(x) for x in dw.mget(*keys_to_total) ] )
             except:
                 total = 'NaN'
             dw.set(key, str(total))
