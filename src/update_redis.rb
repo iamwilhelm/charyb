@@ -21,7 +21,7 @@ module Charyb
     end
 
     #File.open("output.csv", "w") do |pipe|
-    IO.popen("python script/importer.py -n 0", "w+") do |pipe|
+      IO.popen("python script/importer.py -n 0", "w+") do |pipe|
 
       # write header stuff
       pipe.write("name, \"" + imported_table.table_heading + "\"\n")
@@ -49,10 +49,11 @@ module Charyb
       end
 
       pipe.close_write
-      #fout.write pipe.read
       while !pipe.eof?
           pipe.readline
       end
+
+      #pipe.close
     end
 
   end
