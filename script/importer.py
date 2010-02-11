@@ -88,12 +88,12 @@ class Importer:
         self.db.delete(self.name)
 
         # remove data
-        for kk in self.db.keys(self.name+'*'):
+        for kk in self.db.keys(self.name+'|*'):
             self.db.delete(kk)
 
         # remove search terms
         self.db.select(self.search_db_num)
-        for kk in self.db.keys(self.name+'*'):
+        for kk in self.db.keys(self.name+'|*'):
             self.db.srem(kk, self.hdr['name'])
             if self.db.scard(kk)==0:
                 self.db.delete(kk)
